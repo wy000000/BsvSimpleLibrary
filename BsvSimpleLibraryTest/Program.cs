@@ -20,11 +20,12 @@ namespace bsv
             string txid = "d6ad0a5fe9f4b7187641b8d9fa9d49754395d338d3fc07887c606a26415a961f";
             string uri = bsvConfiguration_class.bitindexUri;
             string network = bsvConfiguration_class.testNetwork;
+            string opReturnData = "bsv test";
 
             Dictionary<string, string> response;
 
             //send bsv and / or write data.
-            response = bsvTransaction_class.send(privateKey, 1000, network, destAddress, null, "bsv test");
+            response = bsvTransaction_class.send(privateKey, 1000, network, destAddress, null, opReturnData);
 
             //get opreturn data
             //byte[] bytes = BitIndex_class.getOpReturnData(uri, network, txid);

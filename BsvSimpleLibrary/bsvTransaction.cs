@@ -12,7 +12,7 @@ namespace BsvSimpleLibrary
     {
         /// <summary>
         /// Send bsv satoshis to an address from an address and/or write/read data to BSV blockchain. 
-        /// If changeBackAddress is null, it would be set to the sending address automatically. 
+        /// If changeBackAddress is null, the sending address would be set as default changeBackAddress.. 
         /// The fee would be set to 1.0x Sat/B automatically. 
         /// Set the "donationSatoshi" parameter to <1000 if do not want to donate. The minimum acceptable donation is 1000. 
         /// If success, return the txid; else return error information. 
