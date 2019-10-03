@@ -16,7 +16,7 @@ namespace bsv
         static void Main(string[] args)
         {
             string destAddress = "n3Ro8jRU3MNmdhL9KNRkCT6ikQxT26iPaR";//test
-            string privateKey = "cSfVAmTktbeKaZ4ZmcYHjoLwdLCmxvE3YP8APf4pnMYKz5YsyM1N"; //test
+            string privateKey = ""; //test
             string txid = "d6ad0a5fe9f4b7187641b8d9fa9d49754395d338d3fc07887c606a26415a961f";
             string uri = bsvConfiguration_class.bitindexUri;
             string network = bsvConfiguration_class.testNetwork;
