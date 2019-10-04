@@ -2,7 +2,7 @@
 This is a simple example to Send bsv satoshis to an address from an address and/or write/read data to/from BSV blockchain. 
 If changeBackAddress is null, the sending address would be set as default changeBackAddress. 
 The fee would be set to 1.0x Sat/B automatically. 
-Set the "donationSatoshi" parameter to <1000 if do not want to donate. The minimum acceptable donation is 1000. 
+Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
             string destAddress = "n3Ro8jRU3MNmdhL9KNRkCT6ikQxT26iPaR";//test
@@ -36,3 +36,5 @@ If success, return the txid; else return error information.
             Console.WriteLine("press any key to exist");
             Console.ReadKey();
 Open BSV License.
+
+18WrLbAU54S8N16jMHomkhqpMtkPHLh3Dv
