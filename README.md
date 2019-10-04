@@ -32,6 +32,10 @@ If success, return the txid; else return error information.
 
             //get utxo
             BitIndexUtxo_class[] utxos = BitIndex_class.getUtxosByAnAddress(uri, network, destAddress);
+            
+            //AES
+            byte[] ciphers = AES_class.aesEncryptStringToBytes(opReturnData, privateKey);
+            string plainStr = AES_class.aesDecryptStringFromBytes(ciphers, privateKey);
 
             Console.WriteLine("press any key to exist");
             Console.ReadKey();
