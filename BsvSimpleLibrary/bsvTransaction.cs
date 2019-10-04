@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using NBitcoin;
 using NBitcoin.Altcoins;
+//using System.Runtime.InteropServices;
 
 namespace BsvSimpleLibrary
 {
     public class bsvTransaction_class
     {
+        //[DllImport("KERNEL32")]
+        //static extern bool QueryPerformanceCounter(out long lpPerformanceCount);
         /// <summary>
         /// Send bsv satoshis to an address from an address and/or write/read data to/from BSV blockchain. 
         /// If changeBackAddress is null, the sending address would be set as default changeBackAddress.. 
         /// The fee would be set to 1.0x Sat/B automatically. 
-        /// Set the "donationSatoshi" parameter to <1000 if do not want to donate. The minimum acceptable donation is 1000. 
+        /// Set the "donationSatoshi" =0 if do not donate.  
         /// If success, return the txid; else return error information. 
         /// </summary>
         /// <param name="privateKeyStr"></param>
@@ -23,15 +27,13 @@ namespace BsvSimpleLibrary
         /// <param name="destAddress"></param>
         /// <param name="changeBackAddress">If changeBackAddress is null, it would be set to the sending address automatically. </param>
         /// <param name="opreturnData">If opreturnData is not null, the data would be write to the blockchain.</param>
-        /// <param name="donationSatoshi">Set the "donationSatoshi" parameter to 0 if do not want to donate.</param>
+        /// <param name="donationSatoshi">Set the "donationSatoshi" parameter = 0 if do not donate.</param>
         /// <returns>If success, return the txid; else return error information</returns>
         public static Dictionary<string, string> send(string privateKeyStr, long sendSatoshi, string network,
-            string destAddress = null, string changeBackAddress = null, string opreturnData = null, long donationSatoshi = 1000)
+            string destAddress = null, string changeBackAddress = null, string opreturnData = null, long donationSatoshi = 100)
         {
             Dictionary<string, string> response = new Dictionary<string, string>();
-            long donationSat = 0;
-            if (donationSatoshi >= 1000)
-                donationSat = donationSatoshi;
+            long donationSat = setDonationSatoshi(donationSatoshi);
             BitcoinSecret privateKey = null;
             try { privateKey = new BitcoinSecret(privateKeyStr); }
             catch (FormatException e)
@@ -87,6 +89,27 @@ namespace BsvSimpleLibrary
             }
             return (response);
         }
+        static long setDonationSatoshi(long donationSatoshi)
+        {
+            if (donationSatoshi == 0 || donationSatoshi >= 1000)
+                return (donationSatoshi);
+            else
+            {
+                //long l;
+                //QueryPerformanceCounter(out l);                
+                DateTime dt = DateTime.Now;
+                int seed = (int)dt.Ticks;
+                //Console.WriteLine("tick=" + seed);
+                Random rand = new Random(seed);
+                int v = rand.Next(1000 + (int)donationSatoshi);
+                //Thread.Sleep(1);
+                //Console.WriteLine("v=" + v);
+                if (v >= 1000)
+                    return (v);
+                else
+                    return (0);
+            }
+        }
         static bool addin(long sendSatoshi, Transaction tx, BitIndexUtxo_class[] utxos, out long balance, out long estimatedFee,
             string destAddress, string changeBackAddress, string opreturnData, long donationSat)
         {           
@@ -112,7 +135,6 @@ namespace BsvSimpleLibrary
                 return (false);
             return (true);
         }
-
         static long addout(Transaction tx, string opreturnData, string destAddress, string changeBackAddress,
             long sendSatoshi, long balance, long estimatedFee, long donationSat, string network)
         {
@@ -154,7 +176,6 @@ namespace BsvSimpleLibrary
             }
             return (outSum);
         }
-
         static decimal sign(Transaction tx, string privateKeyStr, BitIndexUtxo_class[] utxos, long balance, long sendSatoshi, long donationSat)
         {
             //the change back address must be at last.

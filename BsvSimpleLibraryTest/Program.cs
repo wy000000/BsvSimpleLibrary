@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.IO;
-//using Newtonsoft.Json;
-using NBitcoin;
+using NBitcoin.DataEncoders;
 using BsvSimpleLibrary;
+using System.Security.Cryptography;
 
 namespace bsv
 {
+    
     class Program
     {
         static void Main(string[] args)
