@@ -39,6 +39,9 @@ If success, return the txid; else return error information.
 
             Console.WriteLine("press any key to exist");
             Console.ReadKey();
+
 Open BSV License.
+
+https://www.nuget.org/packages/BsvSimpleLibrary/
 
 18WrLbAU54S8N16jMHomkhqpMtkPHLh3Dv
