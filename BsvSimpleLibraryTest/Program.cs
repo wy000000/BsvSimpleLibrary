@@ -7,7 +7,6 @@ using System.Net;
 using System.IO;
 using NBitcoin.DataEncoders;
 using BsvSimpleLibrary;
-using System.Security.Cryptography;
 
 namespace bsv
 {
@@ -17,7 +16,7 @@ namespace bsv
         static void Main(string[] args)
         {
             string destAddress = "n3Ro8jRU3MNmdhL9KNRkCT6ikQxT26iPaR";//test
-            string privateKey = ""; //test
+            string privateKey = ""; //(test) your private key
             string txid = "d6ad0a5fe9f4b7187641b8d9fa9d49754395d338d3fc07887c606a26415a961f";
             string uri = bsvConfiguration_class.bitindexUri;
             string network = bsvConfiguration_class.testNetwork;
@@ -44,9 +43,13 @@ namespace bsv
             ////get utxo
             //BitIndexUtxo_class[] utxos = BitIndex_class.getUtxosByAnAddress(uri, network, destAddress);
 
-            ////AES
+            ////AES is moved to BitcoinSVCryptor library.
             //byte[] ciphers = AES_class.aesEncryptStringToBytes(opReturnData, privateKey);
             //string plainStr = AES_class.aesDecryptStringFromBytes(ciphers, privateKey);
+
+            ////get BSV price based on USDT from OKEX
+            //double price = BsvPrice_class.getBsvPriceOnUSDT();
+            //double priceOnSat = BsvPrice_class.getSatoshiPriceOnCent();
 
             Console.WriteLine("press any key to exist");
             Console.ReadKey();

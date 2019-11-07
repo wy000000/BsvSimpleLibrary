@@ -19,10 +19,10 @@ namespace BsvSimpleLibrary
             {
                 //This generates a new key and initialization vector (IV).                
                 SHA256 sha256 = SHA256.Create();
-                byte[] aesKey = sha256.ComputeHash(privateKey);
+                byte[] aesKey = sha256.ComputeHash(privateKey, 0, 16);
                 myAes.Key = aesKey;
                 byte[] aesIV = new byte[16];
-                Array.Copy(sha256.ComputeHash(aesKey), aesIV, 16);
+                Array.Copy(sha256.ComputeHash(privateKey, 16, 16), aesIV, 16);
                 myAes.IV = aesIV;
             }
             catch (Exception e)

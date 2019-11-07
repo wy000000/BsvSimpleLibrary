@@ -112,10 +112,10 @@ namespace BsvSimpleLibrary
         }
         static bool addin(long sendSatoshi, Transaction tx, BitIndexUtxo_class[] utxos, out long balance, out long estimatedFee,
             string destAddress, string changeBackAddress, string opreturnData, long donationSat)
-        {           
+        {
             balance = 0;
-            long neededSatoshi = sendSatoshi+donationSat;
-            estimatedFee= 150;
+            long neededSatoshi = sendSatoshi + donationSat;
+            estimatedFee = 150;
             if (opreturnData != null)
                 estimatedFee += opreturnData.Length;
             neededSatoshi += estimatedFee;
@@ -153,7 +153,7 @@ namespace BsvSimpleLibrary
                 tx.Outputs.Add(txout);
                 outSum += donationSat;
             }
-            if (opreturnData!=null)
+            if (opreturnData != null)
             {
                 byte[] opretrunBytes = Encoding.UTF8.GetBytes(opreturnData);
                 TxNullDataTemplate opreturnTemplate = new TxNullDataTemplate(bsvConfiguration_class.maxLengthOfOpReturnData);
@@ -163,7 +163,7 @@ namespace BsvSimpleLibrary
                     Value = Money.Zero,
                     ScriptPubKey = opreturnScript
                 });
-            }            
+            }
             //put the change back address at last.
             if (changeBackAddress != null)
             {
@@ -180,7 +180,7 @@ namespace BsvSimpleLibrary
         {
             //the change back address must be at last.
             List<Coin> coinList = new List<Coin>();
-            foreach(BitIndexUtxo_class utxo in utxos)
+            foreach (BitIndexUtxo_class utxo in utxos)
                 coinList.Add(new Coin(uint256.Parse(utxo.TxId), utxo.OutIndex, new Money(utxo.Satoshis),
                     Script.FromHex(utxo.ScriptPubKey)));
             BitcoinSecret privateKey = new BitcoinSecret(privateKeyStr);
