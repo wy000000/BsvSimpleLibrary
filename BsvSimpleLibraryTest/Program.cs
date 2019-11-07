@@ -44,8 +44,6 @@ namespace bsv
             //BitIndexUtxo_class[] utxos = BitIndex_class.getUtxosByAnAddress(uri, network, destAddress);
 
             ////AES is moved to BitcoinSVCryptor library.
-            //byte[] ciphers = AES_class.aesEncryptStringToBytes(opReturnData, privateKey);
-            //string plainStr = AES_class.aesDecryptStringFromBytes(ciphers, privateKey);
 
             ////get BSV price based on USDT from OKEX
             //double price = BsvPrice_class.getBsvPriceOnUSDT();
