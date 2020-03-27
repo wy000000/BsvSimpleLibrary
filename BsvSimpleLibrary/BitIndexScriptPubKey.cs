@@ -14,5 +14,7 @@ namespace BsvSimpleLibrary
         public string Type { get; set; }
         [JsonProperty("addresses")]
         public string[] Addresses { get; set; }
+        [JsonProperty("isTruncated")]
+        public string isTruncated { get; set; }
     }
 }

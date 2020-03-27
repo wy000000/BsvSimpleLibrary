@@ -9,17 +9,16 @@
     <Company>wy</Company>
     <Copyright>Open BSV License</Copyright>
     <PackageProjectUrl>https://github.com/wy000000/BsvSimpleLibrary</PackageProjectUrl>
-    <Description>ver 0.1.5. Bsv price is added. It is from OKEx based on USDT.
+    <Description>Ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. More functions will be listed in future version.
+ver 0.1.5. Bsv price is added. It is from OKEx based on USDT.
 AES is deleted. It is move to BitcoinSVCryptor library. Both of them are not compatible.
 This is a simple example to send bsv satoshis to an address from an address and/or write/read data to/from BSV blockchain.</Description>
-    <PackageReleaseNotes>ver 0.1.5. Bsv price is added. It is from OKEx based on USDT.
-AES is deleted. It is move to BitcoinSVCryptor library. Both of them are not compatible.</PackageReleaseNotes>
-    <Version>0.1.5</Version>
+    <PackageReleaseNotes>Ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. More functions will be listed in future version.</PackageReleaseNotes>
+    <Version>0.1.6</Version>
     <Product>BsvSimpleLibrary</Product>
     <PackageId>BsvSimpleLibrary</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-    <PackageLicenseExpression></PackageLicenseExpression>
-    <PackageLicenseUrl>https://github.com/bitcoin-sv/bitcoin-sv/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression></PackageLicenseExpression>    
     <PackageLicenseFile>Open BSV License.txt</PackageLicenseFile>
   </PropertyGroup>
 

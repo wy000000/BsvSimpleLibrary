@@ -26,13 +26,13 @@ namespace BsvSimpleLibrary
         public long Time { get; set; }
         [JsonProperty("blocktime")]
         public long BlockTime { get; set; }
-        [JsonProperty("valueIn")]
-        public decimal ValueIn { get; set; }
-        [JsonProperty("fees")]
-        public decimal Fees { get; set; }
-        [JsonProperty("valueOut")]
-        public decimal ValueOut { get; set; }
-        [JsonProperty("rawtx")]
-        public string RawTx { get; set; }
+        //[JsonProperty("valueIn")]
+        //public decimal ValueIn { get; set; }
+        //[JsonProperty("fees")]
+        //public decimal Fees { get; set; }
+        //[JsonProperty("valueOut")]
+        //public decimal ValueOut { get; set; }
+        //[JsonProperty("hex")]
+        //public string RawTx { get; set; }
     }
 }

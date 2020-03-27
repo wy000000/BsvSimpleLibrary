@@ -12,12 +12,15 @@ namespace BsvSimpleLibrary
 {
     public class BitIndex_class
     {
-        public static Dictionary<string, string> sendTransaction(string uri, string network, string rawtx)
+        public static string sendTransaction(string uri, string network, string rawtx)
         {
-            string contentStr = "{\"rawtx\":\"" + rawtx + "\"}";
+            string contentStr = "{\"txhex\":\"" + rawtx + "\"}";
             Task<string> TaskResponseData = bitindexPostFunction(uri, contentStr, network, bsvConfiguration_class.sendRawTransaction);
-            Dictionary<string, string> responseDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(TaskResponseData.Result);
-            return (responseDic);
+            //Dictionary<string, string> responseDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(TaskResponseData.Result);
+            //Dictionary<string, string> responseDic = new Dictionary<string, string>();       
+            //Console.WriteLine();
+            //Console.WriteLine(TaskResponseData.Result);
+            return (TaskResponseData.Result);
         }
         public static BitIndexTransaction getTransaction(string uri, string network, string txid)
         {
@@ -25,24 +28,24 @@ namespace BsvSimpleLibrary
             BitIndexTransaction Btx = JsonConvert.DeserializeObject<BitIndexTransaction>(TaskResponseData.Result);
             return (Btx);
         }
-        public static Dictionary<string, string> getRawTransaction(string uri, string network, string txid)
-        {
-            Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getRawtx, txid);
-            Dictionary<string, string> responseDic = null;
-            try
-            {
-                responseDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(TaskResponseData.Result);
-                return (responseDic);
-            }
-            catch (JsonReaderException e)
-            {
-                Console.WriteLine();
-                Console.WriteLine(e.Message);
-                responseDic = new Dictionary<string, string>();
-                responseDic.Add("Error", e.Message);
-                return (responseDic);
-            }
-        }
+        //public static Dictionary<string, string> getRawTransaction(string uri, string network, string txid)
+        //{
+        //    Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getRawtx, txid);
+        //    Dictionary<string, string> responseDic = null;
+        //    try
+        //    {
+        //        responseDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(TaskResponseData.Result);
+        //        return (responseDic);
+        //    }
+        //    catch (JsonReaderException e)
+        //    {
+        //        Console.WriteLine();
+        //        Console.WriteLine(e.Message);
+        //        responseDic = new Dictionary<string, string>();
+        //        responseDic.Add("Error", e.Message);
+        //        return (responseDic);
+        //    }
+        //}
         public static BitIndexUtxo_class[] getUtxosByAnAddress(string uri, string network, string addr)
         {
             Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getUtxosByAnAddress, addr);
@@ -50,6 +53,8 @@ namespace BsvSimpleLibrary
             try
             {
                 BitIndexUtxo_class[] utxos = JsonConvert.DeserializeObject<BitIndexUtxo_class[]>(responseData);
+                Console.WriteLine();
+                Console.WriteLine("utxos length:" + utxos.Length);
                 return (utxos);
             }
             catch (JsonSerializationException e)
@@ -59,29 +64,44 @@ namespace BsvSimpleLibrary
                 return (null);
             }
         }
-        public static BitIndexAddressInfo getAddressInfo(string uri, string network, string addr)
-        {
-            Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getAddressInfo, addr);
-            string responseData = TaskResponseData.Result;
-            BitIndexAddressInfo addrInfo = JsonConvert.DeserializeObject<BitIndexAddressInfo>(responseData);
-            return (addrInfo);
-        }
+        //public static BitIndexAddressInfo getAddressInfo(string uri, string network, string addr)
+        //{
+        //    Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getAddressInfo, addr);
+        //    string responseData = TaskResponseData.Result;
+        //    BitIndexAddressInfo addrInfo = JsonConvert.DeserializeObject<BitIndexAddressInfo>(responseData);
+        //    return (addrInfo);
+        //}
 
         public static byte[] getOpReturnData(string uri, string network, string txid)
         {
             BitIndexTransaction tx = getTransaction(uri, network, txid);
             if (tx.Outputs!=null)
             {
+                int subLength = 0;
+                string opReturnHexStr = null;
                 foreach (BitIndexOutput output in tx.Outputs)
                 {
+                    subLength = 0;
                     if (output.ScriptPubKey.Type == bsvConfiguration_class.opReturnType)
                     {
-                        string s = output.ScriptPubKey.Hex.Substring(bsvConfiguration_class.opReturnLength);
-                        HexEncoder hexEncoder = new HexEncoder();
-                        byte[] bytes = hexEncoder.DecodeData(s);
-                        return (bytes);
+                        subLength = 4;
+                        opReturnHexStr = output.ScriptPubKey.Hex;
+                        break;                        
+                    }
+                    if(output.ScriptPubKey.Type == "nonstandard")
+                    {
+                        opReturnHexStr = output.ScriptPubKey.Hex;
+                        if (opReturnHexStr.Substring(0, 2)=="6a")
+                        {
+                            subLength = 4;
+                            break;
+                        }
                     }
                 }
+                string s = opReturnHexStr.Substring(subLength);
+                HexEncoder hexEncoder = new HexEncoder();
+                byte[] bytes = hexEncoder.DecodeData(s);
+                return (bytes);
             }
             return (null);
         }

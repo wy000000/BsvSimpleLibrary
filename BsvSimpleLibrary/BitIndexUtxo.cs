@@ -9,31 +9,31 @@ namespace BsvSimpleLibrary
 {
     public class BitIndexUtxo_class
     {
-        [JsonProperty("address")]
-        public string Address { get; set; }
+        //[JsonProperty("address")]
+        //public string Address { get; set; }
 
-        [JsonProperty("txid")]
+        [JsonProperty("tx_hash")]
         public string TxId { get; set; }
 
-        [JsonProperty("vout")]
+        [JsonProperty("tx_pos")]
         public uint OutIndex { get; set; }
 
         [JsonProperty("value")]
-        public decimal Value { get; set; }
+        public long Value { get; set; }
 
         [JsonProperty("height")]
         public long Height { get; set; }
 
-        [JsonProperty("confirmations")]
-        public long Confirmations { get; set; }
+        //[JsonProperty("confirmations")]
+        //public long Confirmations { get; set; }
 
-        [JsonProperty("scriptPubKey")]
-        public string ScriptPubKey { get; set; }
+        //[JsonProperty("scriptPubKey")]
+        //public string ScriptPubKey { get; set; }
 
-        [JsonProperty("satoshis")]
-        public long Satoshis { get; set; }
+        //[JsonProperty("satoshis")]
+        //public long Satoshis { get; set; }
 
-        [JsonProperty("amount")]
-        public decimal Amount { get; set; }
+        //[JsonProperty("amount")]
+        //public decimal Amount { get; set; }
     }
 }

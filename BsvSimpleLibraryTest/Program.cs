@@ -7,6 +7,7 @@ using System.Net;
 using System.IO;
 using NBitcoin.DataEncoders;
 using BsvSimpleLibrary;
+using NBitcoin;
 
 namespace bsv
 {
@@ -15,9 +16,9 @@ namespace bsv
     {
         static void Main(string[] args)
         {
-            string destAddress = "n3Ro8jRU3MNmdhL9KNRkCT6ikQxT26iPaR";//test
+            string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test
             string privateKey = ""; //(test) your private key
-            string txid = "d6ad0a5fe9f4b7187641b8d9fa9d49754395d338d3fc07887c606a26415a961f";
+            string txid = "b83711fbef90ae6a509741d859f77b5fea6b419abdd9ee9b818efa0af5c86b63";
             string uri = bsvConfiguration_class.bitindexUri;
             string network = bsvConfiguration_class.testNetwork;
             string opReturnData = "bsv test";
@@ -25,29 +26,29 @@ namespace bsv
             Dictionary<string, string> response;
 
             ////send bsv and / or write data.
-            //response = bsvTransaction_class.send(privateKey, 1000, network, destAddress, null, opReturnData);
+            //response = bsvTransaction_class.send(privateKey, 0, network, null, null, opReturnData, 1, 0);
 
             ////get opreturn data
             ////byte[] bytes = BitIndex_class.getOpReturnData(uri, network, txid);
             //string s = BitIndex_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
 
-            ////get raw tx
-            //response = BitIndex_class.getRawTransaction(uri, network, txid);
-
             ////get tx
             //BitIndexTransaction tx = BitIndex_class.getTransaction(uri, network, txid);
-
-            ////get address Info
-            //BitIndexAddressInfo addrInfo = BitIndex_class.getAddressInfo(uri, network, destAddress);
 
             ////get utxo
             //BitIndexUtxo_class[] utxos = BitIndex_class.getUtxosByAnAddress(uri, network, destAddress);
 
-            ////AES is moved to BitcoinSVCryptor library.
-
             ////get BSV price based on USDT from OKEX
             //double price = BsvPrice_class.getBsvPriceOnUSDT();
             //double priceOnSat = BsvPrice_class.getSatoshiPriceOnCent();
+
+            /*Unavailable at present. More functions will be listed on furture version.
+            ////get address Info
+            //BitIndexAddressInfo addrInfo = BitIndex_class.getAddressInfo(uri, network, destAddress);
+            ////get raw tx
+            //response = BitIndex_class.getRawTransaction(uri, network, txid);
+            */
+
 
             Console.WriteLine("press any key to exist");
             Console.ReadKey();

@@ -27,24 +27,43 @@ namespace BsvSimpleLibrary
         /// <param name="destAddress"></param>
         /// <param name="changeBackAddress">If changeBackAddress is null, it would be set to the sending address automatically. </param>
         /// <param name="opreturnData">If opreturnData is not null, the data would be write to the blockchain.</param>
+        /// <param name="feeSatPerByte">fee rate is represented by Satoshis per Byte</param>
         /// <param name="donationSatoshi">Set the "donationSatoshi" parameter = 0 if do not donate.</param>
         /// <returns>If success, return the txid; else return error information</returns>
         public static Dictionary<string, string> send(string privateKeyStr, long sendSatoshi, string network,
-            string destAddress = null, string changeBackAddress = null, string opreturnData = null, long donationSatoshi = 100)
+            string destAddressStr = null, string changeBackAddressStr = null,
+            string opreturnData = null, double feeSatPerByte = 1, long donationSatoshi = 100)
         {
             Dictionary<string, string> response = new Dictionary<string, string>();
             long donationSat = setDonationSatoshi(donationSatoshi);
+            ///////////////////////////
             BitcoinSecret privateKey = null;
             try { privateKey = new BitcoinSecret(privateKeyStr); }
             catch (FormatException e)
             {
                 Console.WriteLine();
                 Console.WriteLine(e.Message);
-                return (null);
+                response.Add("Error", e.Message);
+                return (response);
             }
             Network networkFlag = privateKey.Network;
-            if (changeBackAddress == null)
-                changeBackAddress = privateKey.GetAddress().ToString();
+            BitcoinAddress destAddress = null;
+            if (destAddressStr == null && sendSatoshi > 0)
+            {
+                string err = " the destAddress is null, but the sendSatoshi is not 0";
+                Console.WriteLine();
+                Console.WriteLine("Error: " + err);
+                response.Add("Error", err);
+                return (response);
+            }
+            if (destAddressStr != null)
+                destAddress = BitcoinAddress.Create(destAddressStr);
+            BitcoinAddress changeBackAddress = null;
+            if (changeBackAddressStr == null)
+                changeBackAddress = privateKey.GetAddress();
+            else
+                changeBackAddress = BitcoinAddress.Create(changeBackAddressStr);
+            ////////////////////////////////////////
             Transaction tx = null;
             if (networkFlag.Name == bsvConfiguration_class.NbitTestNet)
             {
@@ -72,21 +91,28 @@ namespace BsvSimpleLibrary
                     return (response);
                 }
             }
+            Script scriptPubKey = privateKey.ScriptPubKey;
+            ////////////////////////////
             BitIndexUtxo_class[] utxos = BitIndex_class.getUtxosByAnAddress(bsvConfiguration_class.bitindexUri, network,
                 privateKey.GetAddress().ToString());
-            long balance;
+            //long balance;
             //long fee;
-            long estimatedFee;
-            long outSum;
-            if (addin(sendSatoshi, tx, utxos, out balance, out estimatedFee,
-                destAddress, changeBackAddress, opreturnData, donationSat))
-            {
-                outSum = addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi,
-                    balance, estimatedFee, donationSat, network);
-                decimal feeRate = sign(tx, privateKeyStr, utxos, balance, sendSatoshi, donationSat);
-                response = BitIndex_class.sendTransaction(bsvConfiguration_class.bitindexUri, network, tx.ToHex());
-                return (response);
-            }
+            //long estimatedFee;
+            //long outSum;
+            addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi, donationSat, network);
+            long changeBacksats = addin(sendSatoshi, tx, utxos, donationSat, feeSatPerByte, scriptPubKey);
+            sign(tx, privateKeyStr, utxos, changeBacksats, scriptPubKey);
+            string responseStr = BitIndex_class.sendTransaction(bsvConfiguration_class.bitindexUri, network, tx.ToHex());
+            response.Add("send info", responseStr);
+            //if (addin(sendSatoshi, tx, utxos, out balance, out estimatedFee,
+            //    destAddress, changeBackAddress, opreturnData, donationSat))
+            //{
+            //    addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi,
+            //        balance, estimatedFee, donationSat, network);
+            //    sign(tx, privateKeyStr, utxos, balance, sendSatoshi, donationSat, feeSatPerByte);
+            //    response = BitIndex_class.sendTransaction(bsvConfiguration_class.bitindexUri, network, tx.ToHex());
+            //    return (response);
+            //}
             return (response);
         }
         static long setDonationSatoshi(long donationSatoshi)
@@ -110,48 +136,70 @@ namespace BsvSimpleLibrary
                     return (0);
             }
         }
-        static bool addin(long sendSatoshi, Transaction tx, BitIndexUtxo_class[] utxos, out long balance, out long estimatedFee,
-            string destAddress, string changeBackAddress, string opreturnData, long donationSat)
+        /// <summary>
+        /// return satoshis of chang back
+        /// </summary>
+        /// <param name="sendSatoshi"></param>
+        /// <param name="tx"></param>
+        /// <param name="utxos"></param>
+        /// <param name="donationSat"></param>
+        /// <param name="feeSatPerByte"></param>
+        /// <returns></returns>
+        static long addin(long sendSatoshi, Transaction tx, BitIndexUtxo_class[] utxos, long donationSat,
+            double feeSatPerByte, Script scriptPubKey)
         {
-            balance = 0;
+            long satsInTxInputs = 0;
             long neededSatoshi = sendSatoshi + donationSat;
-            estimatedFee = 150;
-            if (opreturnData != null)
-                estimatedFee += opreturnData.Length;
-            neededSatoshi += estimatedFee;
+            long fee = 0;
+            //long estimatedFee = 150;
+            //if (opreturnData != null)
+            //    neededSatoshi += opreturnData.Length;
+            //estimatedFee += opreturnData.Length;            
             foreach (BitIndexUtxo_class utxo in utxos)
             {
                 OutPoint outPoint = new OutPoint(uint256.Parse(utxo.TxId), utxo.OutIndex);
                 TxIn txin = new TxIn(outPoint);
-                //txin.ScriptSig = Script.FromHex(utxo.ScriptPubKey);
+                txin.ScriptSig = scriptPubKey;//Script.FromHex(utxo.ScriptPubKey);
                 tx.Inputs.Add(txin);
-                neededSatoshi += 150;
-                estimatedFee += 150;
-                balance += utxo.Satoshis;
-                if (balance >= neededSatoshi)
-                    return (true);
+                //neededSatoshi += 150;
+                //estimatedFee += 150;
+                satsInTxInputs += utxo.Value;
+                fee = getTxFee(tx, feeSatPerByte);
+                neededSatoshi += fee;
+                if (satsInTxInputs >= neededSatoshi)
+                    break;
             }
-            if (balance < neededSatoshi)
-                return (false);
-            return (true);
+            //if (satsInTxInputs < neededSatoshi)
+            //    return (false);
+            long changBackSatoshi = satsInTxInputs - sendSatoshi - fee - donationSat;
+            Console.WriteLine();
+            Console.WriteLine("fee : {0}", fee);
+            return (changBackSatoshi);
         }
-        static long addout(Transaction tx, string opreturnData, string destAddress, string changeBackAddress,
-            long sendSatoshi, long balance, long estimatedFee, long donationSat, string network)
+        static long getTxFee(Transaction tx, double feeSatPerByte)
         {
-            long outSum = 0;
+            double feeDouble = (tx.ToBytes().Length + tx.Inputs.Count * 81) * feeSatPerByte;
+            long fee = Convert.ToInt64(Math.Ceiling(feeDouble));
+            return (fee);
+        }
+        static void addout(Transaction tx, string opreturnData,
+            BitcoinAddress destAddress, BitcoinAddress changeBackAddress,
+            long sendSatoshi, long donationSat, string network)
+        {
+            //long outSum = 0;
             if (destAddress != null)
             {
-                BitcoinAddress outAddress = BitcoinAddress.Create(destAddress);
-                TxOut txout = new TxOut(new Money(sendSatoshi), outAddress.ScriptPubKey);
+                //BitcoinAddress outAddress = BitcoinAddress.Create(destAddress);
+                TxOut txout = new TxOut(new Money(sendSatoshi), destAddress.ScriptPubKey);
                 tx.Outputs.Add(txout);
-                outSum += sendSatoshi;
+                //outSum += sendSatoshi;
             }
             if (donationSat >= 1000 && network == bsvConfiguration_class.mainNetwork)
             {
-                BitcoinAddress outAddress = BitcoinAddress.Create("18WrLbAU54S8N16jMHomkhqpMtkPHLh3Dv");
+                BitcoinAddress outAddress = BitcoinAddress.Create("199Kjhv6PLS8xn61y2fmJjvun2XwqA1UMm");
                 TxOut txout = new TxOut(new Money(donationSat), outAddress.ScriptPubKey);
                 tx.Outputs.Add(txout);
-                outSum += donationSat;
+                //outSum += donationSat;
             }
             if (opreturnData != null)
             {
@@ -165,37 +213,36 @@ namespace BsvSimpleLibrary
                 });
             }
             //put the change back address at last.
-            if (changeBackAddress != null)
-            {
-                BitcoinAddress changeAddress = BitcoinAddress.Create(changeBackAddress);
-                //fee = tx.ToBytes().Length + 50;
-                long changeBackSatoshi = balance - sendSatoshi - estimatedFee - donationSat;
-                TxOut txback = new TxOut(new Money(changeBackSatoshi), changeAddress.ScriptPubKey);
-                tx.Outputs.Add(txback);
-                outSum += changeBackSatoshi;
-            }
-            return (outSum);
+            //BitcoinAddress changeAddress = BitcoinAddress.Create(changeBackAddress);
+            //fee = tx.ToBytes().Length + 50;
+            //long changeBackSatoshi = balance - sendSatoshi - estimatedFee - donationSat;
+            TxOut txback = new TxOut(new Money(0), changeBackAddress.ScriptPubKey);
+            tx.Outputs.Add(txback);
+            //outSum += changeBackSatoshi;            
+            //return (outSum);
         }
-        static decimal sign(Transaction tx, string privateKeyStr, BitIndexUtxo_class[] utxos, long balance, long sendSatoshi, long donationSat)
+        static void sign(Transaction tx, string privateKeyStr, BitIndexUtxo_class[] utxos, long changeBackSatoshi, 
+            Script scriptPubKey)
+            //long satsInTxInputs, long sendSatoshi, long donationSat, double feeSatPerByte)
         {
             //the change back address must be at last.
             List<Coin> coinList = new List<Coin>();
             foreach (BitIndexUtxo_class utxo in utxos)
-                coinList.Add(new Coin(uint256.Parse(utxo.TxId), utxo.OutIndex, new Money(utxo.Satoshis),
-                    Script.FromHex(utxo.ScriptPubKey)));
+                coinList.Add(new Coin(uint256.Parse(utxo.TxId), utxo.OutIndex, new Money(utxo.Value), scriptPubKey));
             BitcoinSecret privateKey = new BitcoinSecret(privateKeyStr);
             Coin[] coins = coinList.ToArray();
-            tx.Sign(privateKey, coins);
+            //tx.Sign(privateKey, coins);
             //reSign to adjust fee
-            //the change back address must be at last.
-            long fee = tx.ToBytes().Length + 20;
-            long changBackSatoshi = balance - sendSatoshi - fee - donationSat;
-            tx.Outputs.Last().Value = changBackSatoshi;
+            //the change back address must be at last.  
+            //double feeDouble = tx.ToBytes().Length * feeSatPerByte;
+            //long fee = Convert.ToInt64(Math.Ceiling(feeDouble));
+            //long changBackSatoshi = satsInTxInputs - sendSatoshi - fee - donationSat;
+            tx.Outputs.Last().Value = changeBackSatoshi;
             tx.Sign(privateKey, coins);
-            decimal feeRate = (decimal)fee / tx.ToBytes().Length;
-            Console.WriteLine();
-            Console.WriteLine("fee rate: {0}", feeRate);
-            return (feeRate);
+            //decimal feeRate = (decimal)fee / tx.ToBytes().Length;
+            //Console.WriteLine();
+            //Console.WriteLine("fee : {0}", fee);
+            //return (fee);
         }
     }
 }
