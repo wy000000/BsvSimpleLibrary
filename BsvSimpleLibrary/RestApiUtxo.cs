@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace BsvSimpleLibrary
 {
-    public class BitIndexUtxo_class
+    public class RestApiUtxo_class
     {
         //[JsonProperty("address")]
         //public string Address { get; set; }

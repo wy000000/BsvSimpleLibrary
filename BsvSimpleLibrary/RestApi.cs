@@ -10,27 +10,48 @@ using NBitcoin;
 
 namespace BsvSimpleLibrary
 {
-    public class BitIndex_class
+    public class RestApi_class
     {
         public static string sendTransaction(string uri, string network, string rawtx)
         {
             string contentStr = "{\"txhex\":\"" + rawtx + "\"}";
-            Task<string> TaskResponseData = bitindexPostFunction(uri, contentStr, network, bsvConfiguration_class.sendRawTransaction);
+            Task<string> TaskResponseData = RestApiPostFunction(uri, contentStr, network, bsvConfiguration_class.sendRawTransaction);
             //Dictionary<string, string> responseDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(TaskResponseData.Result);
             //Dictionary<string, string> responseDic = new Dictionary<string, string>();       
             //Console.WriteLine();
             //Console.WriteLine(TaskResponseData.Result);
             return (TaskResponseData.Result);
         }
-        public static BitIndexTransaction getTransaction(string uri, string network, string txid)
+        public static RestApiTransaction[] getTransactions(string uri, string network, string [] txHashs)
         {
-            Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getTx, txid);
-            BitIndexTransaction Btx = JsonConvert.DeserializeObject<BitIndexTransaction>(TaskResponseData.Result);
+            //Max 20 transactions per request
+            if (txHashs.Length>20)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Error: Max 20 transactions per request");
+                return (null);
+            }
+            string contentStr = "{\"txids\":[";
+            for(int i=0;i<txHashs.Length-1;i++)
+            {
+                contentStr = contentStr + "\"" + txHashs[i] + "\",";
+            }
+            contentStr = contentStr + "\"" + txHashs[txHashs.Length - 1] + "\"]}";
+            Task<string> TaskResponseData
+                = RestApiPostFunction(uri, contentStr, network, bsvConfiguration_class.getTxs);
+            RestApiTransaction[] txs = JsonConvert.DeserializeObject<RestApiTransaction[]>(TaskResponseData.Result);
+            return (txs);
+        }
+
+        public static RestApiTransaction getTransaction(string uri, string network, string txid)
+        {
+            Task<string> TaskResponseData = RestApiGetFunction(uri, network, bsvConfiguration_class.getTx, txid);
+            RestApiTransaction Btx = JsonConvert.DeserializeObject<RestApiTransaction>(TaskResponseData.Result);
             return (Btx);
         }
         //public static Dictionary<string, string> getRawTransaction(string uri, string network, string txid)
         //{
-        //    Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getRawtx, txid);
+        //    Task<string> TaskResponseData = RestApiGetFunction(uri, network, bsvConfiguration_class.getRawtx, txid);
         //    Dictionary<string, string> responseDic = null;
         //    try
         //    {
@@ -46,13 +67,13 @@ namespace BsvSimpleLibrary
         //        return (responseDic);
         //    }
         //}
-        public static BitIndexUtxo_class[] getUtxosByAnAddress(string uri, string network, string addr)
+        public static RestApiUtxo_class[] getUtxosByAnAddress(string uri, string network, string addr)
         {
-            Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getUtxosByAnAddress, addr);
+            Task<string> TaskResponseData = RestApiGetFunction(uri, network, bsvConfiguration_class.getUtxosByAnAddress, addr);
             string responseData = TaskResponseData.Result;
             try
             {
-                BitIndexUtxo_class[] utxos = JsonConvert.DeserializeObject<BitIndexUtxo_class[]>(responseData);
+                RestApiUtxo_class[] utxos = JsonConvert.DeserializeObject<RestApiUtxo_class[]>(responseData);
                 Console.WriteLine();
                 Console.WriteLine("utxos length:" + utxos.Length);
                 return (utxos);
@@ -64,43 +85,69 @@ namespace BsvSimpleLibrary
                 return (null);
             }
         }
-        //public static BitIndexAddressInfo getAddressInfo(string uri, string network, string addr)
-        //{
-        //    Task<string> TaskResponseData = bitindexGetFunction(uri, network, bsvConfiguration_class.getAddressInfo, addr);
-        //    string responseData = TaskResponseData.Result;
-        //    BitIndexAddressInfo addrInfo = JsonConvert.DeserializeObject<BitIndexAddressInfo>(responseData);
-        //    return (addrInfo);
-        //}
+        public static RestApiAddressHistoryTx[] getAddressHistory(string uri, string network, string addr)
+        {
+            Task<string> TaskResponseData = RestApiGetFunction(uri, network,
+                bsvConfiguration_class.getAddressHistory, addr);
+            string responseData = TaskResponseData.Result;
+            RestApiAddressHistoryTx[] addrHistory
+                = JsonConvert.DeserializeObject<RestApiAddressHistoryTx[]>(responseData);
+            return (addrHistory);
+        }
+
+        public static byte[] getOpReturnData(RestApiTransaction tx)
+        {
+            if (tx != null)
+            {
+                if (tx.Outputs != null)
+                {
+                    int subLength = 0;
+                    string opReturnHexStr = null;
+                    foreach (RestApiOutput output in tx.Outputs)
+                    {
+                        subLength = 0;
+                        if (output.ScriptPubKey.Type == bsvConfiguration_class.opReturnType)
+                        {
+                            subLength = 4;
+                            opReturnHexStr = output.ScriptPubKey.Hex;
+                            break;
+                        }
+                        if (output.ScriptPubKey.Type == "nonstandard")
+                        {
+                            opReturnHexStr = output.ScriptPubKey.Hex;
+                            if (opReturnHexStr.Substring(0, 2) == "6a")
+                            {
+                                subLength = 4;
+                                break;
+                            }
+                        }
+                    }
+                    if (opReturnHexStr != null)
+                    {
+                        string s = opReturnHexStr.Substring(subLength);
+                        HexEncoder hexEncoder = new HexEncoder();
+                        byte[] bytes = hexEncoder.DecodeData(s);
+                        return (bytes);
+                    }
+                }
+            }
+            return (null);
+        }
+        public static string getOpReturnData(RestApiTransaction tx, Encoding encoder)
+        {
+            string s = null;
+            byte[] bytes = getOpReturnData(tx);
+            if (bytes != null)
+                s = encoder.GetString(bytes);
+            return (s);
+        }
 
         public static byte[] getOpReturnData(string uri, string network, string txid)
         {
-            BitIndexTransaction tx = getTransaction(uri, network, txid);
-            if (tx.Outputs!=null)
+            if (txid != null)
             {
-                int subLength = 0;
-                string opReturnHexStr = null;
-                foreach (BitIndexOutput output in tx.Outputs)
-                {
-                    subLength = 0;
-                    if (output.ScriptPubKey.Type == bsvConfiguration_class.opReturnType)
-                    {
-                        subLength = 4;
-                        opReturnHexStr = output.ScriptPubKey.Hex;
-                        break;                        
-                    }
-                    if(output.ScriptPubKey.Type == "nonstandard")
-                    {
-                        opReturnHexStr = output.ScriptPubKey.Hex;
-                        if (opReturnHexStr.Substring(0, 2)=="6a")
-                        {
-                            subLength = 4;
-                            break;
-                        }
-                    }
-                }
-                string s = opReturnHexStr.Substring(subLength);
-                HexEncoder hexEncoder = new HexEncoder();
-                byte[] bytes = hexEncoder.DecodeData(s);
+                RestApiTransaction tx = getTransaction(uri, network, txid);
+                byte[] bytes = getOpReturnData(tx);
                 return (bytes);
             }
             return (null);
@@ -114,7 +161,7 @@ namespace BsvSimpleLibrary
             return (s);
         }
 
-        async static Task<string> bitindexGetFunction(string uri, string network, string FunctionString, string iterm)
+        async static Task<string> RestApiGetFunction(string uri, string network, string FunctionString, string iterm)
         {
             //Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
             //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -134,7 +181,7 @@ namespace BsvSimpleLibrary
             Console.WriteLine(responseData);
             return (responseData);
         }
-        async static Task<string> bitindexPostFunction(string uri, string contentStr, string network, string functionStr)
+        async static Task<string> RestApiPostFunction(string uri, string contentStr, string network, string functionStr)
         {
             //Common testing requirement. If you are consuming an API in a sandbox/test region, uncomment this line of code ONLY for non production uses.
             //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

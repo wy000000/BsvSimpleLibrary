@@ -2,7 +2,7 @@
 
 namespace BsvSimpleLibrary
 {
-    public class BitIndexTransaction
+    public class RestApiTransaction
     {
         [JsonProperty("txid")]
         public string TxId { get; set; }
@@ -15,9 +15,9 @@ namespace BsvSimpleLibrary
         [JsonProperty("locktime")]
         public int LockTime { get; set; }
         [JsonProperty("vin")]
-        public BitIndexInput[] Inputs { get; set; }
+        public RestApiInput[] Inputs { get; set; }
         [JsonProperty("vout")]
-        public BitIndexOutput[] Outputs { get; set; }
+        public RestApiOutput[] Outputs { get; set; }
         [JsonProperty("blockhash")]
         public string BlockHash { get; set; }
         [JsonProperty("confirmations")]
@@ -26,6 +26,7 @@ namespace BsvSimpleLibrary
         public long Time { get; set; }
         [JsonProperty("blocktime")]
         public long BlockTime { get; set; }
+
         //[JsonProperty("valueIn")]
         //public decimal ValueIn { get; set; }
         //[JsonProperty("fees")]

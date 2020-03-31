@@ -8,7 +8,7 @@ If success, return the txid; else return error information.
             string destAddress = "n3Ro8jRU3MNmdhL9KNRkCT6ikQxT26iPaR";//test
             string privateKey = ""; //(test) your private key
             string txid = "d6ad0a5fe9f4b7187641b8d9fa9d49754395d338d3fc07887c606a26415a961f";
-            string uri = bsvConfiguration_class.bitindexUri;
+            string uri = bsvConfiguration_class.RestApiUri;
             string network = bsvConfiguration_class.testNetwork;
             string opReturnData = "bsv test";
 
@@ -18,20 +18,20 @@ If success, return the txid; else return error information.
             //response = bsvTransaction_class.send(privateKey, 1000, network, destAddress, null, opReturnData);
 
             ////get opreturn data
-            ////byte[] bytes = BitIndex_class.getOpReturnData(uri, network, txid);
-            //string s = BitIndex_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
+            ////byte[] bytes = RestApi_class.getOpReturnData(uri, network, txid);
+            //string s = RestApi_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
 
             ////get raw tx
-            //response = BitIndex_class.getRawTransaction(uri, network, txid);
+            //response = RestApi_class.getRawTransaction(uri, network, txid);
 
             ////get tx
-            //BitIndexTransaction tx = BitIndex_class.getTransaction(uri, network, txid);
+            //RestApiTransaction tx = RestApi_class.getTransaction(uri, network, txid);
 
             ////get address Info
-            //BitIndexAddressInfo addrInfo = BitIndex_class.getAddressInfo(uri, network, destAddress);
+            //RestApiAddressInfo addrInfo = RestApi_class.getAddressInfo(uri, network, destAddress);
 
             ////get utxo
-            //BitIndexUtxo_class[] utxos = BitIndex_class.getUtxosByAnAddress(uri, network, destAddress);
+            //RestApiUtxo_class[] utxos = RestApi_class.getUtxosByAnAddress(uri, network, destAddress);
 
             ////AES is moved to BitcoinSVCryptor library.
             

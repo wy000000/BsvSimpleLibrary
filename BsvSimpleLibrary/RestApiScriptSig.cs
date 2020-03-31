@@ -2,7 +2,7 @@
 
 namespace BsvSimpleLibrary
 {
-    public class BitIndexScriptSig
+    public class RestApiScriptSig
     {
         [JsonProperty("asm")]
         public string Asm { get; set; }

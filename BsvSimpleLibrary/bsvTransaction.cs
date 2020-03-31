@@ -93,7 +93,7 @@ namespace BsvSimpleLibrary
             }
             Script scriptPubKey = privateKey.ScriptPubKey;
             ////////////////////////////
-            BitIndexUtxo_class[] utxos = BitIndex_class.getUtxosByAnAddress(bsvConfiguration_class.bitindexUri, network,
+            RestApiUtxo_class[] utxos = RestApi_class.getUtxosByAnAddress(bsvConfiguration_class.RestApiUri, network,
                 privateKey.GetAddress().ToString());
             //long balance;
             //long fee;
@@ -102,7 +102,7 @@ namespace BsvSimpleLibrary
             addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi, donationSat, network);
             long changeBacksats = addin(sendSatoshi, tx, utxos, donationSat, feeSatPerByte, scriptPubKey);
             sign(tx, privateKeyStr, utxos, changeBacksats, scriptPubKey);
-            string responseStr = BitIndex_class.sendTransaction(bsvConfiguration_class.bitindexUri, network, tx.ToHex());
+            string responseStr = RestApi_class.sendTransaction(bsvConfiguration_class.RestApiUri, network, tx.ToHex());
             response.Add("send info", responseStr);
             //if (addin(sendSatoshi, tx, utxos, out balance, out estimatedFee,
             //    destAddress, changeBackAddress, opreturnData, donationSat))
@@ -110,7 +110,7 @@ namespace BsvSimpleLibrary
             //    addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi,
             //        balance, estimatedFee, donationSat, network);
             //    sign(tx, privateKeyStr, utxos, balance, sendSatoshi, donationSat, feeSatPerByte);
-            //    response = BitIndex_class.sendTransaction(bsvConfiguration_class.bitindexUri, network, tx.ToHex());
+            //    response = RestApi_class.sendTransaction(bsvConfiguration_class.RestApiUri, network, tx.ToHex());
             //    return (response);
             //}
             return (response);
@@ -145,7 +145,7 @@ namespace BsvSimpleLibrary
         /// <param name="donationSat"></param>
         /// <param name="feeSatPerByte"></param>
         /// <returns></returns>
-        static long addin(long sendSatoshi, Transaction tx, BitIndexUtxo_class[] utxos, long donationSat,
+        static long addin(long sendSatoshi, Transaction tx, RestApiUtxo_class[] utxos, long donationSat,
             double feeSatPerByte, Script scriptPubKey)
         {
             long satsInTxInputs = 0;
@@ -155,7 +155,7 @@ namespace BsvSimpleLibrary
             //if (opreturnData != null)
             //    neededSatoshi += opreturnData.Length;
             //estimatedFee += opreturnData.Length;            
-            foreach (BitIndexUtxo_class utxo in utxos)
+            foreach (RestApiUtxo_class utxo in utxos)
             {
                 OutPoint outPoint = new OutPoint(uint256.Parse(utxo.TxId), utxo.OutIndex);
                 TxIn txin = new TxIn(outPoint);
@@ -221,13 +221,13 @@ namespace BsvSimpleLibrary
             //outSum += changeBackSatoshi;            
             //return (outSum);
         }
-        static void sign(Transaction tx, string privateKeyStr, BitIndexUtxo_class[] utxos, long changeBackSatoshi, 
+        static void sign(Transaction tx, string privateKeyStr, RestApiUtxo_class[] utxos, long changeBackSatoshi, 
             Script scriptPubKey)
             //long satsInTxInputs, long sendSatoshi, long donationSat, double feeSatPerByte)
         {
             //the change back address must be at last.
             List<Coin> coinList = new List<Coin>();
-            foreach (BitIndexUtxo_class utxo in utxos)
+            foreach (RestApiUtxo_class utxo in utxos)
                 coinList.Add(new Coin(uint256.Parse(utxo.TxId), utxo.OutIndex, new Money(utxo.Value), scriptPubKey));
             BitcoinSecret privateKey = new BitcoinSecret(privateKeyStr);
             Coin[] coins = coinList.ToArray();

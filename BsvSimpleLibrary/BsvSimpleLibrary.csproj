@@ -2,19 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>0.1.5.0</AssemblyVersion>
-    <FileVersion>0.1.5.0</FileVersion>
+    <AssemblyVersion>0.1.7.0</AssemblyVersion>
+    <FileVersion>0.1.7.0</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>wy</Authors>
     <Company>wy</Company>
     <Copyright>Open BSV License</Copyright>
     <PackageProjectUrl>https://github.com/wy000000/BsvSimpleLibrary</PackageProjectUrl>
-    <Description>Ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. More functions will be listed in future version.
+    <Description>Ver 0.17 is added with get address history and txs. function names are changed.
+Ver 0.16 is moved to whatsonchain.com since RestApi.network is unavailable. More functions will be listed in future version.
 ver 0.1.5. Bsv price is added. It is from OKEx based on USDT.
 AES is deleted. It is move to BitcoinSVCryptor library. Both of them are not compatible.
 This is a simple example to send bsv satoshis to an address from an address and/or write/read data to/from BSV blockchain.</Description>
-    <PackageReleaseNotes>Ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. More functions will be listed in future version.</PackageReleaseNotes>
-    <Version>0.1.6</Version>
+    <PackageReleaseNotes>Ver 0.17 is added with get address history and txs. function names are changed.</PackageReleaseNotes>
+    <Version>0.1.7</Version>
     <Product>BsvSimpleLibrary</Product>
     <PackageId>BsvSimpleLibrary</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>

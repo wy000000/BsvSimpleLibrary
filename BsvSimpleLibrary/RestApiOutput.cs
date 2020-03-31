@@ -2,7 +2,7 @@
 
 namespace BsvSimpleLibrary
 {
-    public class BitIndexOutput
+    public class RestApiOutput
     {
         [JsonProperty("value")]
         public decimal Value { get; set; }
@@ -14,7 +14,7 @@ namespace BsvSimpleLibrary
         public uint N { get; set; }
 
         [JsonProperty("scriptPubKey")]
-        public BitIndexScriptPubKey ScriptPubKey { get; set; }
+        public RestApiScriptPubKey ScriptPubKey { get; set; }
 
         //[JsonProperty("spentTxId")]
         //public string SpentTxId { get; set; }
