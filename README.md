@@ -4,12 +4,13 @@ If changeBackAddress is null, the sending address would be set as default change
 Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
+Ver 0.17 is added with get address history and txs. function names are changed.
 ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. More functions will be listed in future version.
 
             string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test
             string privateKey = ""; //(test) your private key
-            string txid = "b83711fbef90ae6a509741d859f77b5fea6b419abdd9ee9b818efa0af5c86b63";
-            string uri = bsvConfiguration_class.bitindexUri;
+            string txid = "fc4471fb3761da4cc317b09a4fae5a68a11f8db41e703cd75125310f39a975fc";
+            string uri = bsvConfiguration_class.RestApiUri;
             string network = bsvConfiguration_class.testNetwork;
             string opReturnData = "bsv test";
 
@@ -28,15 +29,27 @@ ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. Mor
             ////get utxo
             //RestApiUtxo_class[] utxos = RestApi_class.getUtxosByAnAddress(uri, network, destAddress);
 
+            ////get address Info
+            //RestApiAddressHistoryTx[] addrHistory = RestApi_class.getAddressHistory(uri, network, destAddress);
+
+            ////get txs. Max 20 transactions per request
+            //string[] txHashs ={"2443b5def7bc400ce71b973e70114cbdb7695f84d2f3ad881f6f0d12c085a5c4",
+            //    "21b3b70f51bee8882fa40778a6fc68eab33239f20b01a559f110c2ba229f8c98",
+            //    "fc4471fb3761da4cc317b09a4fae5a68a11f8db41e703cd75125310f39a975fc" };
+            //RestApiTransaction[] txs = RestApi_class.getTransactions(uri, network, txHashs);
+            //foreach(RestApiTransaction tx in txs)
+            //{
+            //    string s = RestApi_class.getOpReturnData(tx, bsvConfiguration_class.encoding);
+            //    Console.WriteLine(s);
+            //}
+
             ////get BSV price based on USDT from OKEX
             //double price = BsvPrice_class.getBsvPriceOnUSDT();
             //double priceOnSat = BsvPrice_class.getSatoshiPriceOnCent();
 
             /*Unavailable at present. More functions will be listed on furture version.
-            ////get address Info
-            //BitIndexAddressInfo addrInfo = BitIndex_class.getAddressInfo(uri, network, destAddress);
             ////get raw tx
-            //response = BitIndex_class.getRawTransaction(uri, network, txid);
+            //response = RestApi_class.getRawTransaction(uri, network, txid);
             */
 
 Open BSV License.
