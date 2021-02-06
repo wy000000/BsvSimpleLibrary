@@ -15,9 +15,10 @@ namespace bsv
     {
         static void Main(string[] args)
         {
+
             string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test
             string privateKey = ""; //(test) your private key
-            string txid = "fc4471fb3761da4cc317b09a4fae5a68a11f8db41e703cd75125310f39a975fc";
+            string txid = "d45bdda15e197e068288012f1764fd10cf884f5befcafb7d545af55f9d6e9cf0";
             string uri = bsvConfiguration_class.RestApiUri;
             string network = bsvConfiguration_class.testNetwork;
             string opReturnData = "bsv test";
@@ -28,7 +29,7 @@ namespace bsv
             //response = bsvTransaction_class.send(privateKey, 0, network, null, null, opReturnData, 1, 0);
 
             ////get opreturn data
-            ////byte[] bytes = RestApi_class.getOpReturnData(uri, network, txid);
+            //byte[] bytes = RestApi_class.getOpReturnFullData(uri, network, txid);
             //string s = RestApi_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
 
             ////get tx

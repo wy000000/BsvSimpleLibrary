@@ -203,9 +203,11 @@ namespace BsvSimpleLibrary
             }
             if (opreturnData != null)
             {
-                byte[] opretrunBytes = Encoding.UTF8.GetBytes(opreturnData);
-                TxNullDataTemplate opreturnTemplate = new TxNullDataTemplate(bsvConfiguration_class.maxLengthOfOpReturnData);
-                Script opreturnScript = opreturnTemplate.GenerateScriptPubKey(opretrunBytes);
+                byte[] strBytes = Encoding.UTF8.GetBytes(opreturnData);
+                byte[] opretrunBytes = new byte[] { 0, 106 }.Concat(strBytes).ToArray();
+                Script opreturnScript = new Script(opretrunBytes);
+                //TxNullDataTemplate opreturnTemplate = new TxNullDataTemplate(bsvConfiguration_class.maxLengthOfOpReturnData);
+                //opreturnScript = opreturnTemplate.GenerateScriptPubKey(opretrunBytes);
                 tx.Outputs.Add(new TxOut()
                 {
                     Value = Money.Zero,

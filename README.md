@@ -20,7 +20,7 @@ ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. Mor
             //response = bsvTransaction_class.send(privateKey, 0, network, null, null, opReturnData, 1, 0);
 
             ////get opreturn data
-            ////byte[] bytes = RestApi_class.getOpReturnData(uri, network, txid);
+            ////byte[] bytes = RestApi_class.getOpReturnFullData(uri, network, txid);
             //string s = RestApi_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
 
             ////get tx

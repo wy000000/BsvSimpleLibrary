@@ -95,59 +95,55 @@ namespace BsvSimpleLibrary
             return (addrHistory);
         }
 
-        public static byte[] getOpReturnData(RestApiTransaction tx)
+        static byte[] getOpReturnFullData(RestApiTransaction tx)
         {
             if (tx != null)
             {
                 if (tx.Outputs != null)
                 {
-                    int subLength = 0;
                     string opReturnHexStr = null;
                     foreach (RestApiOutput output in tx.Outputs)
                     {
-                        subLength = 0;
-                        if (output.ScriptPubKey.Type == bsvConfiguration_class.opReturnType)
+                        opReturnHexStr = output.ScriptPubKey.Hex;
+                        if (opReturnHexStr.Substring(0, 4) == "006a"
+                            || opReturnHexStr.Substring(0, 2) == "6a")
                         {
-                            subLength = 4;
-                            opReturnHexStr = output.ScriptPubKey.Hex;
                             break;
-                        }
-                        if (output.ScriptPubKey.Type == "nonstandard")
-                        {
-                            opReturnHexStr = output.ScriptPubKey.Hex;
-                            if (opReturnHexStr.Substring(0, 2) == "6a")
-                            {
-                                subLength = 4;
-                                break;
-                            }
                         }
                     }
                     if (opReturnHexStr != null)
                     {
-                        string s = opReturnHexStr.Substring(subLength);
                         HexEncoder hexEncoder = new HexEncoder();
-                        byte[] bytes = hexEncoder.DecodeData(s);
+                        byte[] bytes = hexEncoder.DecodeData(opReturnHexStr);
                         return (bytes);
                     }
                 }
             }
             return (null);
         }
-        public static string getOpReturnData(RestApiTransaction tx, Encoding encoder)
-        {
-            string s = null;
-            byte[] bytes = getOpReturnData(tx);
-            if (bytes != null)
-                s = encoder.GetString(bytes);
-            return (s);
-        }
 
-        public static byte[] getOpReturnData(string uri, string network, string txid)
+        //public static string getOpReturnData(RestApiTransaction tx, Encoding encoder)
+        //{
+        //    string s = null;
+        //    byte[] bytes = getOpReturnFullData(tx);
+        //    if (bytes != null)
+        //    {
+        //        if (bytes.Length - 2 > 0)
+        //        {
+        //            byte[] strBytes = bytes.Skip(2).ToArray();
+        //            s = encoder.GetString(strBytes);
+        //        }
+        //    }
+        //    Console.WriteLine(s);
+        //    return (s);
+        //}
+
+        public static byte[] getOpReturnFullData(string uri, string network, string txid)
         {
             if (txid != null)
             {
                 RestApiTransaction tx = getTransaction(uri, network, txid);
-                byte[] bytes = getOpReturnData(tx);
+                byte[] bytes = getOpReturnFullData(tx);
                 return (bytes);
             }
             return (null);
@@ -155,9 +151,16 @@ namespace BsvSimpleLibrary
         public static string getOpReturnData(string uri, string network, string txid, Encoding encoder)
         {
             string s = null;
-            byte[] bytes = getOpReturnData(uri, network, txid);
-            if(bytes!=null)
-                s = encoder.GetString(bytes);
+            byte[] bytes = getOpReturnFullData(uri, network, txid);
+            if (bytes != null)
+            {
+                if (bytes.Length - 2 > 0)
+                {
+                    byte[] strBytes = bytes.Skip(2).ToArray();
+                    s = encoder.GetString(strBytes);
+                }
+            }
+            Console.WriteLine(s);
             return (s);
         }
 
