@@ -95,7 +95,7 @@ namespace BsvSimpleLibrary
             return (addrHistory);
         }
 
-        static byte[] getOpReturnFullData(RestApiTransaction tx)
+        public static byte[] getOpReturnFullData(RestApiTransaction tx)
         {
             if (tx != null)
             {
@@ -122,21 +122,21 @@ namespace BsvSimpleLibrary
             return (null);
         }
 
-        //public static string getOpReturnData(RestApiTransaction tx, Encoding encoder)
-        //{
-        //    string s = null;
-        //    byte[] bytes = getOpReturnFullData(tx);
-        //    if (bytes != null)
-        //    {
-        //        if (bytes.Length - 2 > 0)
-        //        {
-        //            byte[] strBytes = bytes.Skip(2).ToArray();
-        //            s = encoder.GetString(strBytes);
-        //        }
-        //    }
-        //    Console.WriteLine(s);
-        //    return (s);
-        //}
+        public static string getOpReturnData(RestApiTransaction tx, Encoding encoder)
+        {
+            string s = null;
+            byte[] bytes = getOpReturnFullData(tx);
+            if (bytes != null)
+            {
+                if (bytes.Length - 2 > 0)
+                {
+                    byte[] strBytes = bytes.Skip(2).ToArray();
+                    s = encoder.GetString(strBytes);
+                }
+            }
+            Console.WriteLine(s);
+            return (s);
+        }
 
         public static byte[] getOpReturnFullData(string uri, string network, string txid)
         {

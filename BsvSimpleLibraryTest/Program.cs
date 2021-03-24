@@ -46,7 +46,7 @@ namespace bsv
             //    "21b3b70f51bee8882fa40778a6fc68eab33239f20b01a559f110c2ba229f8c98",
             //    "fc4471fb3761da4cc317b09a4fae5a68a11f8db41e703cd75125310f39a975fc" };
             //RestApiTransaction[] txs = RestApi_class.getTransactions(uri, network, txHashs);
-            //foreach(RestApiTransaction tx in txs)
+            //foreach (RestApiTransaction tx in txs)
             //{
             //    string s = RestApi_class.getOpReturnData(tx, bsvConfiguration_class.encoding);
             //    Console.WriteLine(s);
