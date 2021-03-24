@@ -4,12 +4,8 @@ If changeBackAddress is null, the sending address would be set as default change
 Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
-Ver 0.19, the omitted getOpReturnData(RestApiTransaction tx, Encoding encoder) function is re-added.
-Ver 0.18 is updated OP_Return to OP_False Op_Return.
 Ver 0.17 is added with get address history and txs. function names are changed.
-Ver 0.16 is moved to whatsonchain.com since RestApi.network is unavailable. More functions will be listed in future version.
-ver 0.1.5. Bsv price is added. It is from OKEx based on USDT.
-AES is deleted. It is move to BitcoinSVCryptor library. Both of them are not compatible.
+ver 0.16 is moved to whatsonchain.com since bitindex.network is unavailable. More functions will be listed in future version.
 
             string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test
             string privateKey = ""; //(test) your private key
