@@ -4,6 +4,7 @@ If changeBackAddress is null, the sending address would be set as default change
 Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
+Ver 0.20 fixed a bug of getOpReturnData function.
 Ver 0.19, the omitted getOpReturnData(RestApiTransaction tx, Encoding encoder) function is re-added.
 Ver 0.18 is updated OP_Return to OP_False Op_Return.
 Ver 0.17 is added with get address history and txs. function names are changed.
