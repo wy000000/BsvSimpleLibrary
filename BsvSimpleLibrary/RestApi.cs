@@ -108,15 +108,11 @@ namespace BsvSimpleLibrary
                         if (opReturnHexStr.Substring(0, 4) == "006a"
                             || opReturnHexStr.Substring(0, 2) == "6a")
                         {
-                            break;
+                            HexEncoder hexEncoder = new HexEncoder();
+                            byte[] bytes = hexEncoder.DecodeData(opReturnHexStr);
+                            return (bytes);
                         }
-                    }
-                    if (opReturnHexStr != null)
-                    {
-                        HexEncoder hexEncoder = new HexEncoder();
-                        byte[] bytes = hexEncoder.DecodeData(opReturnHexStr);
-                        return (bytes);
-                    }
+                    }                    
                 }
             }
             return (null);
