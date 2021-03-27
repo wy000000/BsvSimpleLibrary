@@ -4,6 +4,7 @@ If changeBackAddress is null, the sending address would be set as default change
 Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
+Ver 0.21 added a tx sending function to pass the sent tx, tx fee and donation fee out.
 Ver 0.20 fixed a bug of getOpReturnData function.
 Ver 0.19, the omitted getOpReturnData(RestApiTransaction tx, Encoding encoder) function is re-added.
 Ver 0.18 is updated OP_Return to OP_False Op_Return.
@@ -24,6 +25,8 @@ AES is deleted. It is move to BitcoinSVCryptor library. Both of them are not com
 
             ////send bsv and / or write data.
             //response = bsvTransaction_class.send(privateKey, 0, network, null, null, opReturnData, 1, 0);
+            //Transaction tx = null;
+            //response = bsvTransaction_class.send(privateKey, 0, network, out tx, null, null, opReturnData, 1, 0);      
 
             ////get opreturn data
             ////byte[] bytes = RestApi_class.getOpReturnFullData(uri, network, txid);

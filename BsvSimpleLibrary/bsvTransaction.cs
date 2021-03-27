@@ -28,14 +28,53 @@ namespace BsvSimpleLibrary
         /// <param name="changeBackAddress">If changeBackAddress is null, it would be set to the sending address automatically. </param>
         /// <param name="opreturnData">If opreturnData is not null, the data would be write to the blockchain.</param>
         /// <param name="feeSatPerByte">fee rate is represented by Satoshis per Byte</param>
-        /// <param name="donationSatoshi">Set the "donationSatoshi" parameter = 0 if do not donate.</param>
+        /// <param name="donationSatoshi">Set the "donationSatoshi" parameter = 0 if do not donate. 
+        /// It does not donate everytiem if donationSatoshi is greater than 0 and less than 1000.
+        /// The average donation fee is the set value.</param>
         /// <returns>If success, return the txid; else return error information</returns>
         public static Dictionary<string, string> send(string privateKeyStr, long sendSatoshi, string network,
             string destAddressStr = null, string changeBackAddressStr = null,
             string opreturnData = null, double feeSatPerByte = 1, long donationSatoshi = 100)
         {
+            Transaction tx = null;
+            long txfee = 0;
+            long donationFee = 0;
+            Dictionary<string, string> response = send(privateKeyStr, sendSatoshi, network,
+                out tx, out txfee, out donationFee,
+                destAddressStr, changeBackAddressStr, opreturnData,
+                feeSatPerByte, donationSatoshi);
+            return (response);
+        }
+        /// <summary>
+        /// Send bsv satoshis to an address from an address and/or write/read data to/from BSV blockchain. 
+        /// If changeBackAddress is null, the sending address would be set as default changeBackAddress.. 
+        /// The fee would be set to 1.0x Sat/B automatically. 
+        /// Set the "donationSatoshi" =0 if do not donate.  
+        /// If success, return the txid; else return error information. 
+        /// </summary>
+        /// <param name="privateKeyStr"></param>
+        /// <param name="sendSatoshi"></param>
+        /// <param name="network"></param>
+        /// <param name="tx">nbitcoin transaction. pass the sent tx out</param>
+        /// <param name="txfee">tx fee. satoshi.</param>
+        /// <param name="donationFee">donated satoshis in the tx.</param>
+        /// <param name="destAddress"></param>
+        /// <param name="changeBackAddress">If changeBackAddress is null, it would be set to the sending address automatically. </param>
+        /// <param name="opreturnData">If opreturnData is not null, the data would be write to the blockchain.</param>
+        /// <param name="feeSatPerByte">fee rate is represented by Satoshis per Byte</param>
+        /// <param name="donationSatoshi">Set the "donationSatoshi" parameter = 0 if do not donate. 
+        /// It does not donate everytiem if donationSatoshi is greater than 0 and less than 1000.
+        /// The average donation fee is the set value.</param>
+        /// <returns>If success, return the txid; else return error information</returns>
+        public static Dictionary<string, string> send(string privateKeyStr, long sendSatoshi, string network,
+            out Transaction tx, out long txfee, out long donationFee, string destAddressStr = null, string changeBackAddressStr = null,
+            string opreturnData = null, double feeSatPerByte = 1, long donationSatoshi = 100)
+        {
+            tx = null;
+            txfee = 0;
             Dictionary<string, string> response = new Dictionary<string, string>();
             long donationSat = setDonationSatoshi(donationSatoshi);
+            donationFee = donationSat;
             ///////////////////////////
             BitcoinSecret privateKey = null;
             try { privateKey = new BitcoinSecret(privateKeyStr); }
@@ -46,8 +85,6 @@ namespace BsvSimpleLibrary
                 response.Add("Error", e.Message);
                 return (response);
             }
-            Network networkFlag = privateKey.Network;
-            BitcoinAddress destAddress = null;
             if (destAddressStr == null && sendSatoshi > 0)
             {
                 string err = " the destAddress is null, but the sendSatoshi is not 0";
@@ -56,15 +93,16 @@ namespace BsvSimpleLibrary
                 response.Add("Error", err);
                 return (response);
             }
+            Network networkFlag = privateKey.Network;
+            BitcoinAddress destAddress = null;
             if (destAddressStr != null)
-                destAddress = BitcoinAddress.Create(destAddressStr);
+                destAddress = BitcoinAddress.Create(destAddressStr, networkFlag);
             BitcoinAddress changeBackAddress = null;
             if (changeBackAddressStr == null)
-                changeBackAddress = privateKey.GetAddress();
+                changeBackAddress = privateKey.GetAddress(ScriptPubKeyType.Legacy);
             else
-                changeBackAddress = BitcoinAddress.Create(changeBackAddressStr);
+                changeBackAddress = BitcoinAddress.Create(changeBackAddressStr, networkFlag);
             ////////////////////////////////////////
-            Transaction tx = null;
             if (networkFlag.Name == bsvConfiguration_class.NbitTestNet)
             {
                 tx = ForkIdTransaction.Create(NBitcoin.Altcoins.BCash.Instance.Testnet);
@@ -91,30 +129,21 @@ namespace BsvSimpleLibrary
                     return (response);
                 }
             }
-            Script scriptPubKey = privateKey.ScriptPubKey;
+            Script scriptPubKey = privateKey.GetAddress(ScriptPubKeyType.Legacy).ScriptPubKey;
             ////////////////////////////
             RestApiUtxo_class[] utxos = RestApi_class.getUtxosByAnAddress(bsvConfiguration_class.RestApiUri, network,
-                privateKey.GetAddress().ToString());
+                privateKey.GetAddress(ScriptPubKeyType.Legacy).ToString());
             //long balance;
             //long fee;
             //long estimatedFee;
             //long outSum;
-            addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi, donationSat, network);
-            long changeBacksats = addin(sendSatoshi, tx, utxos, donationSat, feeSatPerByte, scriptPubKey);
+            addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi, donationSat, network, networkFlag);
+            long changeBacksats = addin(sendSatoshi, tx, utxos, donationSat, feeSatPerByte, scriptPubKey, out txfee);
             sign(tx, privateKeyStr, utxos, changeBacksats, scriptPubKey);
             string responseStr = RestApi_class.sendTransaction(bsvConfiguration_class.RestApiUri, network, tx.ToHex());
             response.Add("send info", responseStr);
-            //if (addin(sendSatoshi, tx, utxos, out balance, out estimatedFee,
-            //    destAddress, changeBackAddress, opreturnData, donationSat))
-            //{
-            //    addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi,
-            //        balance, estimatedFee, donationSat, network);
-            //    sign(tx, privateKeyStr, utxos, balance, sendSatoshi, donationSat, feeSatPerByte);
-            //    response = RestApi_class.sendTransaction(bsvConfiguration_class.RestApiUri, network, tx.ToHex());
-            //    return (response);
-            //}
             return (response);
-        }
+        }        
         static long setDonationSatoshi(long donationSatoshi)
         {
             if (donationSatoshi == 0 || donationSatoshi >= 1000)
@@ -146,11 +175,11 @@ namespace BsvSimpleLibrary
         /// <param name="feeSatPerByte"></param>
         /// <returns></returns>
         static long addin(long sendSatoshi, Transaction tx, RestApiUtxo_class[] utxos, long donationSat,
-            double feeSatPerByte, Script scriptPubKey)
+            double feeSatPerByte, Script scriptPubKey, out long fee)
         {
             long satsInTxInputs = 0;
             long neededSatoshi = sendSatoshi + donationSat;
-            long fee = 0;
+            fee = 0;
             //long estimatedFee = 150;
             //if (opreturnData != null)
             //    neededSatoshi += opreturnData.Length;
@@ -184,7 +213,7 @@ namespace BsvSimpleLibrary
         }
         static void addout(Transaction tx, string opreturnData,
             BitcoinAddress destAddress, BitcoinAddress changeBackAddress,
-            long sendSatoshi, long donationSat, string network)
+            long sendSatoshi, long donationSat, string network, Network networkFlag)
         {
             //long outSum = 0;
             if (destAddress != null)
@@ -196,7 +225,9 @@ namespace BsvSimpleLibrary
             }
             if (donationSat >= 1000 && network == bsvConfiguration_class.mainNetwork)
             {
-                BitcoinAddress outAddress = BitcoinAddress.Create("199Kjhv6PLS8xn61y2fmJjvun2XwqA1UMm");
+
+                BitcoinAddress outAddress = BitcoinAddress.Create("199Kjhv6PLS8xn61y2fmJjvun2XwqA1UMm",
+                    networkFlag);
                 TxOut txout = new TxOut(new Money(donationSat), outAddress.ScriptPubKey);
                 tx.Outputs.Add(txout);
                 //outSum += donationSat;
@@ -218,14 +249,14 @@ namespace BsvSimpleLibrary
             //BitcoinAddress changeAddress = BitcoinAddress.Create(changeBackAddress);
             //fee = tx.ToBytes().Length + 50;
             //long changeBackSatoshi = balance - sendSatoshi - estimatedFee - donationSat;
-            TxOut txback = new TxOut(new Money(0), changeBackAddress.ScriptPubKey);
+            TxOut txback = new TxOut(new Money(Money.Zero), changeBackAddress.ScriptPubKey);
             tx.Outputs.Add(txback);
             //outSum += changeBackSatoshi;            
             //return (outSum);
         }
-        static void sign(Transaction tx, string privateKeyStr, RestApiUtxo_class[] utxos, long changeBackSatoshi, 
+        static void sign(Transaction tx, string privateKeyStr, RestApiUtxo_class[] utxos, long changeBackSatoshi,
             Script scriptPubKey)
-            //long satsInTxInputs, long sendSatoshi, long donationSat, double feeSatPerByte)
+        //long satsInTxInputs, long sendSatoshi, long donationSat, double feeSatPerByte)
         {
             //the change back address must be at last.
             List<Coin> coinList = new List<Coin>();

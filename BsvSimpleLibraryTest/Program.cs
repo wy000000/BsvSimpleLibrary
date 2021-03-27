@@ -16,7 +16,7 @@ namespace bsv
         static void Main(string[] args)
         {
 
-            string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test
+            string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test            
             string privateKey = ""; //(test) your private key
             string txid = "d45bdda15e197e068288012f1764fd10cf884f5befcafb7d545af55f9d6e9cf0";
             string uri = bsvConfiguration_class.RestApiUri;
@@ -27,6 +27,12 @@ namespace bsv
 
             ////send bsv and / or write data.
             //response = bsvTransaction_class.send(privateKey, 0, network, null, null, opReturnData, 1, 0);
+            //Transaction tx = null;
+            //long txfee = 0;
+            //long donationFee = 0;
+            //response = bsvTransaction_class.send(privateKey, 0, network, out tx, out txfee, out donationFee,
+            //    null, null, opReturnData, 1, 0);
+            //Console.WriteLine("tx fee: " + txfee);
 
             ////get opreturn data
             //byte[] bytes = RestApi_class.getOpReturnFullData(uri, network, txid);
@@ -60,7 +66,7 @@ namespace bsv
             ////get raw tx
             //response = RestApi_class.getRawTransaction(uri, network, txid);
             */
-
+            Console.WriteLine();
             Console.WriteLine("press any key to exist");
             Console.ReadKey();
 
