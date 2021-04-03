@@ -31,7 +31,6 @@ AES is deleted. It is move to BitcoinSVCryptor library. Both of them are not com
             //response = bsvTransaction_class.send(privateKey, 0, network, out tx, out txfee, out donationFee,
             //    null, null, opReturnData, 1, 0);
             //Console.WriteLine("tx fee: " + txfee);
-
             ////get opreturn data
             ////byte[] bytes = RestApi_class.getOpReturnFullData(uri, network, txid);
             //string s = RestApi_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
