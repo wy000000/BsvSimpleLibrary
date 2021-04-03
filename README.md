@@ -1,18 +1,20 @@
 # BsvSimpleLibrary
-This is a simple example to Send bsv satoshis to an address from an address and/or write/read data to/from BSV blockchain. 
+This is a simple example to send bsv satoshis to a destination address from a source address and/or write/read data to/from BSV blockchain. 
+bitcoinSV. 
+BSV. 
 If changeBackAddress is null, the sending address would be set as default changeBackAddress. 
 Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
-Ver 0.21 added a tx sending function to pass the sent tx, tx fee and donation fee out.
-Ver 0.20 fixed a bug of getOpReturnData function.
-Ver 0.19, the omitted getOpReturnData(RestApiTransaction tx, Encoding encoder) function is re-added.
-Ver 0.18 is updated OP_Return to OP_False Op_Return.
-Ver 0.17 is added with get address history and txs. function names are changed.
-Ver 0.16 is moved to whatsonchain.com since RestApi.network is unavailable. More functions will be listed in future version.
-ver 0.1.5. Bsv price is added. It is from OKEx based on USDT.
+Ver 0.22 is updated to be compatible with Nbitcoin 5.0.76. 
+Ver 0.21 added a tx sending function to pass the sent tx, tx fee and donation fee out. 
+Ver 0.20 fixed a bug of getOpReturnData function. 
+Ver 0.19, the omitted getOpReturnData(RestApiTransaction tx, Encoding encoder) function is re-added. 
+Ver 0.18 is updated OP_Return to OP_False Op_Return. 
+Ver 0.17 is added with get address history and txs. function names are changed. 
+Ver 0.16 is moved to whatsonchain.com since RestApi.network is unavailable. More functions will be listed in future version. 
+ver 0.1.5. Bsv price is added. It is from OKEx based on USDT. 
 AES is deleted. It is move to BitcoinSVCryptor library. Both of them are not compatible.
-
 
             string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test
             string privateKey = ""; //(test) your private key

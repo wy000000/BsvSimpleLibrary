@@ -8,6 +8,7 @@ using System.IO;
 using NBitcoin.DataEncoders;
 using BsvSimpleLibrary;
 using NBitcoin;
+using NBitcoin.Altcoins;
 
 namespace bsv
 {    
@@ -15,7 +16,6 @@ namespace bsv
     {
         static void Main(string[] args)
         {
-
             string destAddress = "mqpWc9BCjbQvj5DyEZCyRrF9X3X9r8iMWJ";//test            
             string privateKey = ""; //(test) your private key
             string txid = "d45bdda15e197e068288012f1764fd10cf884f5befcafb7d545af55f9d6e9cf0";
