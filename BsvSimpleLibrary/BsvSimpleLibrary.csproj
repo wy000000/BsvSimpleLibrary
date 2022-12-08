@@ -43,7 +43,7 @@ BSV
   <ItemGroup>
     <PackageReference Include="NBitcoin" Version="5.0.76" />
     <PackageReference Include="NBitcoin.Altcoins" Version="2.0.30" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
