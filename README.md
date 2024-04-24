@@ -6,6 +6,7 @@ If changeBackAddress is null, the sending address would be set as default change
 Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
+Ver 0.23 fixed a bug of getOpReturnData function.
 Ver 0.22 is updated to be compatible with Nbitcoin 5.0.76. 
 Ver 0.21 added a tx sending function to pass the sent tx, tx fee and donation fee out. 
 Ver 0.20 fixed a bug of getOpReturnData function. 
