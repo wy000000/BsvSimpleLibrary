@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>0.2.2.0</AssemblyVersion>
-    <FileVersion>0.2.2.0</FileVersion>
+    <AssemblyVersion>0.2.3.0</AssemblyVersion>
+    <FileVersion>0.2.3.0</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>wy</Authors>
     <Company>wy</Company>
-    <Copyright>Open BSV License</Copyright>
+    <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/wy000000/BsvSimpleLibrary</PackageProjectUrl>
-    <Description>Ver 0.22 is updated to be compatible with Nbitcoin 5.0.76.
+    <Description>Ver 0.23 fixed a bug of getOpReturnData function.
+Ver 0.22 is updated to be compatible with Nbitcoin 5.0.76.
 Ver 0.21 added a tx sending function to pass the sent tx, tx fee and donation fee out.
 Ver 0.20 fixed a bug of getOpReturnData function.
 Ver 0.19, the omitted getOpReturnData(RestApiTransaction tx, Encoding encoder) function is re-added.
@@ -24,13 +25,13 @@ This is a simple example to send bsv satoshis to a destination address from a so
 bitcoinSV
 BSV
 </Description>
-    <PackageReleaseNotes>Ver 0.22 is updated to be compatible with Nbitcoin 5.0.76.</PackageReleaseNotes>
-    <Version>0.2.2</Version>
+    <PackageReleaseNotes>Ver 0.23 fixed a bug of getOpReturnData function.</PackageReleaseNotes>
+    <Version>0.2.3</Version>
     <Product>BsvSimpleLibrary</Product>
     <PackageId>BsvSimpleLibrary</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression></PackageLicenseExpression>    
-    <PackageLicenseFile>Open BSV License.txt</PackageLicenseFile>
+    <PackageLicenseFile></PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -44,13 +45,6 @@ BSV
     <PackageReference Include="NBitcoin" Version="5.0.76" />
     <PackageReference Include="NBitcoin.Altcoins" Version="2.0.30" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\Open BSV License.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
