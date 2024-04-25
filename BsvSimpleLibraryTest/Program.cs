@@ -49,15 +49,15 @@ namespace bsv
 			////get address Info
 			//RestApiAddressHistoryTx[] addrHistory = RestApi_class.getAddressHistory(uri, network, destAddress);
 
-			////get txs. Max 20 transactions per request
-			//string[] txHashs ={"2443b5def7bc400ce71b973e70114cbdb7695f84d2f3ad881f6f0d12c085a5c4",
-			//    "21b3b70f51bee8882fa40778a6fc68eab33239f20b01a559f110c2ba229f8c98",
-			//    "fc4471fb3761da4cc317b09a4fae5a68a11f8db41e703cd75125310f39a975fc" };
+			//////get txs. Max 20 transactions per request
+			//string[] txHashs ={"fa20def75284a01d033eb5d140f97f86a1df793d380e38c469b792c3b1083721",
+			//	"21b3b70f51bee8882fa40778a6fc68eab33239f20b01a559f110c2ba229f8c98",
+			//	"fc4471fb3761da4cc317b09a4fae5a68a11f8db41e703cd75125310f39a975fc" };
 			//RestApiTransaction[] txs = RestApi_class.getTransactions(uri, network, txHashs);
 			//foreach (RestApiTransaction tx in txs)
 			//{
-			//    string s = RestApi_class.getOpReturnData(tx, bsvConfiguration_class.encoding);
-			//    Console.WriteLine(s);
+			//	string s = RestApi_class.getOpReturnData(tx, bsvConfiguration_class.encoding);
+			//	Console.WriteLine(s);
 			//}
 
 			////get BSV price based on USDT from OKEX

@@ -124,9 +124,14 @@ namespace BsvSimpleLibrary
             byte[] bytes = getOpReturnFullData(tx);
             if (bytes != null)
             {
-                if (bytes.Length - 2 > 0)
+				int prefixLength = 0;
+				if (bytes[0] == 0x00)
+					prefixLength = 2;
+				else
+					prefixLength = 1;
+				if (bytes.Length - 2 > 0)
                 {
-                    byte[] strBytes = bytes.Skip(2).ToArray();
+                    byte[] strBytes = bytes.Skip(prefixLength).ToArray();
                     s = encoder.GetString(strBytes);
                 }
             }

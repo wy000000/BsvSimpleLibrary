@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>0.2.3.0</AssemblyVersion>
-    <FileVersion>0.2.3.0</FileVersion>
+    <AssemblyVersion>0.2.4.0</AssemblyVersion>
+    <FileVersion>0.2.4.0</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>wy</Authors>
     <Company>wy</Company>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/wy000000/BsvSimpleLibrary</PackageProjectUrl>
-    <Description>Ver 0.23 fixed a bug of getOpReturnData function.
+    <Description>Ver 0.24 fixed another bug of getOpReturnData function.
+Ver 0.23 fixed a bug of getOpReturnData function.
 Ver 0.22 is updated to be compatible with Nbitcoin 5.0.76.
 Ver 0.21 added a tx sending function to pass the sent tx, tx fee and donation fee out.
 Ver 0.20 fixed a bug of getOpReturnData function.
@@ -25,13 +26,17 @@ This is a simple example to send bsv satoshis to a destination address from a so
 bitcoinSV
 BSV
 </Description>
-    <PackageReleaseNotes>Ver 0.23 fixed a bug of getOpReturnData function.</PackageReleaseNotes>
-    <Version>0.2.3</Version>
+    <PackageReleaseNotes>Ver 0.24 fixed another bug of getOpReturnData function.</PackageReleaseNotes>
+    <Version>0.2.4</Version>
     <Product>BsvSimpleLibrary</Product>
     <PackageId>BsvSimpleLibrary</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression></PackageLicenseExpression>    
     <PackageLicenseFile></PackageLicenseFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>False</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
