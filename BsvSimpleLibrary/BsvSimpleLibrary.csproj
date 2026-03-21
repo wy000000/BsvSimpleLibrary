@@ -33,7 +33,9 @@ BSV
     <PackageId>BsvSimpleLibrary</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression></PackageLicenseExpression>    
-    <PackageLicenseFile></PackageLicenseFile>
+    <PackageLicenseFile></PackageLicenseFile>    
+    <RepositoryUrl>https://github.com/wy000000/BsvSimpleLibrary</RepositoryUrl>    
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
