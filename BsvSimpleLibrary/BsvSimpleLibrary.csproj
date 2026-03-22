@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>0.2.5.0</AssemblyVersion>
-    <FileVersion>0.2.5.0</FileVersion>
+    <AssemblyVersion>0.2.5.1</AssemblyVersion>
+    <FileVersion>0.2.5.1</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>wy</Authors>
     <Company>wy</Company>
@@ -28,7 +28,7 @@ bitcoinSV
 BSV
 </Description>
     <PackageReleaseNotes>Ver 0.25 Adapted RestApi_class.getUtxosByAnAddress() to align with the updated whatsonchain.com  REST API schema.</PackageReleaseNotes>
-    <Version>0.2.5</Version>
+    <Version>0.2.5.1</Version>
     <Product>BsvSimpleLibrary</Product>
     <PackageId>BsvSimpleLibrary</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>

@@ -49,24 +49,28 @@ namespace BsvSimpleLibrary
 			RestApiTransaction Btx = JsonConvert.DeserializeObject<RestApiTransaction>(TaskResponseData.Result);
 			return (Btx);
 		}
-		//public static Dictionary<string, string> getRawTransaction(string uri, string network, string txid)
-		//{
-		//    Task<string> TaskResponseData = RestApiGetFunction(uri, network, bsvConfiguration_class.getRawtx, txid);
-		//    Dictionary<string, string> responseDic = null;
-		//    try
-		//    {
-		//        responseDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(TaskResponseData.Result);
-		//        return (responseDic);
-		//    }
-		//    catch (JsonReaderException e)
-		//    {
-		//        Console.WriteLine();
-		//        Console.WriteLine(e.Message);
-		//        responseDic = new Dictionary<string, string>();
-		//        responseDic.Add("Error", e.Message);
-		//        return (responseDic);
-		//    }
-		//}
+
+		public static string getRawTransaction(string uri, string network, string txid)
+		{
+			Task<string> TaskResponseData = RestApiGetFunction(uri, network, bsvConfiguration_class.getRawtx, txid);
+			string responseData = TaskResponseData.Result;
+			return responseData;
+			//Dictionary<string, string> responseDic = null;
+			//try
+			//{
+			//	//responseDic = JsonConvert.DeserializeObject<Dictionary<string, string>>(TaskResponseData.Result);
+			//	//return (responseDic);
+			//}
+			//catch (JsonReaderException e)
+			//{
+			//	Console.WriteLine();
+			//	Console.WriteLine(e.Message);
+			//	responseDic = new Dictionary<string, string>();
+			//	responseDic.Add("Error", e.Message);
+			//	return (responseDic);
+			//}
+		}
+
 		public static RestApiUtxo_class[] getUtxosByAnAddress(string uri, string network, string addr)
 		{
 			Task<string> TaskResponseData = RestApiGetFunction(uri, network, bsvConfiguration_class.getUtxosByAnAddress, addr);
@@ -103,14 +107,75 @@ namespace BsvSimpleLibrary
 				return (null);
 			}
 		}
+		public class WocAddressHistoryRequest
+		{
+			[JsonProperty("addresses")]
+			public string[] Addresses { get; set; }
+		}
+
 		public static RestApiAddressHistoryTx[] getAddressHistory(string uri, string network, string addr)
 		{
-			Task<string> TaskResponseData = RestApiGetFunction(uri, network,
-				bsvConfiguration_class.getAddressHistory, addr);
+			string[] addresses= new string[1] { addr };
+			RestApiAddressHistoryTx[] historyTxes= getAddressesHistory(uri, network, addresses);
+			return (historyTxes);
+		}
+
+		public static RestApiAddressHistoryTx[] getAddressesHistory(string uri, string network, string[] addresses)
+		{
+			WocAddressHistoryRequest requestObj = new WocAddressHistoryRequest
+			{
+				Addresses = addresses
+			};
+			string json = JsonConvert.SerializeObject(requestObj);
+			Task<string> TaskResponseData = RestApiPostFunction(uri, json, network,
+				bsvConfiguration_class.getAddressHistory);
 			string responseData = TaskResponseData.Result;
-			RestApiAddressHistoryTx[] addrHistory
-				= JsonConvert.DeserializeObject<RestApiAddressHistoryTx[]>(responseData);
+			RestApiAddressHistoryTx[] addrHistory = ParseAddressHistory(responseData);
 			return (addrHistory);
+		}
+
+		static RestApiAddressHistoryTx[] ParseAddressHistory(string responseData)
+		{
+			WocAddressHistoryResponse[] raw =
+				JsonConvert.DeserializeObject<WocAddressHistoryResponse[]>(responseData);
+
+			List<RestApiAddressHistoryTx> list = new List<RestApiAddressHistoryTx>();
+
+			foreach (WocAddressHistoryResponse addr in raw)
+			{
+				// Unconfirmed
+				if (addr.Unconfirmed != null && addr.Unconfirmed.Result != null)
+				{
+					foreach (WocHistoryResultItem item in addr.Unconfirmed.Result)
+					{
+						RestApiAddressHistoryTx tx = new RestApiAddressHistoryTx
+						{
+							Address = addr.Address,
+							IsConfirmed = false,
+							TxHash = item.TxHash,
+							Height = null
+						};
+						list.Add(tx);
+					}
+				}
+
+				// Confirmed
+				if (addr.Confirmed != null && addr.Confirmed.Result != null)
+				{
+					foreach (WocHistoryResultItem item in addr.Confirmed.Result)
+					{
+						RestApiAddressHistoryTx tx = new RestApiAddressHistoryTx
+						{
+							Address = addr.Address,
+							IsConfirmed = true,
+							TxHash = item.TxHash,
+							Height = item.Height
+						};
+						list.Add(tx);
+					}
+				}
+			}
+			return list.ToArray(); //List<RestApiAddressHistoryTx> list
 		}
 
 		public static byte[] getOpReturnFullData(RestApiTransaction tx)
@@ -199,7 +264,7 @@ namespace BsvSimpleLibrary
 				httpClient.BaseAddress = new Uri(uri);
 				httpClient.DefaultRequestHeaders.TryAddWithoutValidation("accept", "application/json");
 				string uristr = string.Format(FunctionString, network, iterm);
-				using (var response = await httpClient.GetAsync(uristr))
+				using (HttpResponseMessage response = await httpClient.GetAsync(uristr))
 				{
 					responseData = await response.Content.ReadAsStringAsync();
 				}
@@ -218,9 +283,9 @@ namespace BsvSimpleLibrary
 			{
 				httpClient.BaseAddress = new Uri(uri);
 				httpClient.DefaultRequestHeaders.TryAddWithoutValidation("accept", "application/json");
+				string funStr = string.Format(functionStr, network);
 				using (StringContent content = new StringContent(contentStr, bsvConfiguration_class.encoding, "application/json"))
 				{
-					string funStr = string.Format(functionStr, network);
 					using (var response = await httpClient.PostAsync(funStr, content))
 					{
 						responseData = await response.Content.ReadAsStringAsync();

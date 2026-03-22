@@ -18,7 +18,7 @@ namespace BsvSimpleLibrary
         public static readonly string getTxs = "v1/bsv/{0}/txs";
         public static readonly string getRawtx = "v1/bsv/{0}/tx/{1}/hex";
         public static readonly string getUtxosByAnAddress = "v1/bsv/{0}/address/{1}/unspent/all";
-        public static readonly string getAddressHistory = "v1/bsv/{0}/address/{1}/history ";
+        public static readonly string getAddressHistory = "v1/bsv/{0}/addresses/history/all";
         public static readonly int maxLengthOfOpReturnData = 100000;
         public static readonly string opReturnType = "nulldata";
         //public static readonly int opReturnLength = 4;
