@@ -7,6 +7,7 @@ using System.Net.Http;
 using Newtonsoft.Json;
 using NBitcoin.DataEncoders;
 using NBitcoin;
+using BsvSimpleLibrary;
 
 namespace BsvSimpleLibrary
 {
@@ -178,7 +179,7 @@ namespace BsvSimpleLibrary
 			return list.ToArray(); //List<RestApiAddressHistoryTx> list
 		}
 
-		public static byte[] getOpReturnFullData(RestApiTransaction tx)
+		public static string getOpReturnFullData(RestApiTransaction tx)
 		{
 			if (tx != null)
 			{
@@ -191,11 +192,11 @@ namespace BsvSimpleLibrary
 						if (opReturnHexStr.Substring(0, 4) == "006a"
 							|| opReturnHexStr.Substring(0, 2) == "6a")
 						{
-							HexEncoder hexEncoder = new HexEncoder();
-							byte[] bytes = hexEncoder.DecodeData(opReturnHexStr);
-							return (bytes);
+							//HexEncoder hexEncoder = new HexEncoder();
+							//byte[] bytes = hexEncoder.DecodeData(opReturnHexStr);
+							return (opReturnHexStr);
 						}
-					}                    
+					}
 				}
 			}
 			return (null);
@@ -251,6 +252,34 @@ namespace BsvSimpleLibrary
 			}
 			Console.WriteLine(s);
 			return (s);
+		}
+
+		/// <summary>
+		/// 从 OP_RETURN 脚本 hex 中提取所有数据段
+		/// 支持 PUSHDATA1 / PUSHDATA2 / PUSHDATA4
+		/// </summary>
+		static List<byte[]> ExtractOpReturnData(string scriptHex)
+		{
+			List<byte[]> results = new List<byte[]>();
+
+			// 将 hex 转为 Script
+			Script script = Script.FromHex(scriptHex);
+
+			// 遍历所有操作码
+			foreach (Op op in script.ToOps())
+			{
+				if (op.Code == OpcodeType.OP_RETURN || op.Code == OpcodeType.OP_FALSE)
+				{
+					// 跳过 OP_FALSE 和 OP_RETURN
+					continue;
+				}
+
+				if (op.PushData != null)
+				{
+					results.Add(op.PushData);
+				}
+			}
+			return results;
 		}
 
 		async static Task<string> RestApiGetFunction(string uri, string network, string FunctionString, string iterm)
