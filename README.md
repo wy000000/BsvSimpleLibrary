@@ -6,6 +6,7 @@ If changeBackAddress is null, the sending address would be set as default change
 Set the "donationSatoshi"= 0 if do not donate. 
 If success, return the txid; else return error information. 
 
+Ver0.26 fixed data read/write errors caused by dependency package upgrades. Be compatible with Nbitcoin 10.0.3 and NBitcoin.Altcoins 6.0.3.
 Ver 0.25 Adapted RestApi_class.getUtxosByAnAddress() to align with the updated whatsonchain.com  REST API schema.
 Ver 0.24 fixed another bug of getOpReturnData function.
 Ver 0.23 fixed a bug of getOpReturnData function.

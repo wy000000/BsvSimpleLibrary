@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>0.2.5.1</AssemblyVersion>
-    <FileVersion>0.2.5.1</FileVersion>
+    <AssemblyVersion>0.2.6</AssemblyVersion>
+    <FileVersion>0.2.6</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>wy</Authors>
     <Company>wy</Company>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/wy000000/BsvSimpleLibrary</PackageProjectUrl>
-    <Description>Ver 0.25 Adapted RestApi_class.getUtxosByAnAddress() to align with the updated whatsonchain.com  REST API schema.
+    <Description>Ver0.26 fixed data read/write errors caused by dependency package upgrades. Be compatible with Nbitcoin 10.0.3 and NBitcoin.Altcoins 6.0.3.
+Ver 0.25 Adapted RestApi_class.getUtxosByAnAddress() to align with the updated whatsonchain.com  REST API schema.
 Ver 0.24 fixed another bug of getOpReturnData function.
 Ver 0.23 fixed a bug of getOpReturnData function.
 Ver 0.22 is updated to be compatible with Nbitcoin 5.0.76.
@@ -27,15 +28,16 @@ This is a simple example to send bsv satoshis to a destination address from a so
 bitcoinSV
 BSV
 </Description>
-    <PackageReleaseNotes>Ver 0.25 Adapted RestApi_class.getUtxosByAnAddress() to align with the updated whatsonchain.com  REST API schema.</PackageReleaseNotes>
-    <Version>0.2.5.1</Version>
+    <PackageReleaseNotes>Ver0.26 fixed data read/write errors caused by dependency package upgrades.</PackageReleaseNotes>
+    <Version>0.2.6</Version>
     <Product>BsvSimpleLibrary</Product>
     <PackageId>BsvSimpleLibrary</PackageId>
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression></PackageLicenseExpression>    
     <PackageLicenseFile></PackageLicenseFile>    
     <RepositoryUrl>https://github.com/wy000000/BsvSimpleLibrary</RepositoryUrl>    
-    <RepositoryType>git</RepositoryType>
+    <RepositoryType>git</RepositoryType>    
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -50,13 +52,20 @@ BSV
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NBitcoin" Version="5.0.76" />
-    <PackageReference Include="NBitcoin.Altcoins" Version="2.0.30" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NBitcoin" Version="10.0.3" />
+    <PackageReference Include="NBitcoin.Altcoins" Version="6.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

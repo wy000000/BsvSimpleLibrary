@@ -1,13 +1,14 @@
-﻿using System;
+﻿using BsvSimpleLibrary;
+using NBitcoin;
+using NBitcoin.DataEncoders;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http;
-using Newtonsoft.Json;
-using NBitcoin.DataEncoders;
-using NBitcoin;
-using BsvSimpleLibrary;
 
 namespace BsvSimpleLibrary
 {
@@ -179,6 +180,11 @@ namespace BsvSimpleLibrary
 			return list.ToArray(); //List<RestApiAddressHistoryTx> list
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="tx">RestApiTransaction tx</param>
+		/// <returns>opReturnHexStr = output.ScriptPubKey.Hex;</returns>
 		public static string getOpReturnFullData(RestApiTransaction tx)
 		{
 			if (tx != null)
@@ -202,23 +208,34 @@ namespace BsvSimpleLibrary
 			return (null);
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="tx">RestApiTransaction tx</param>
+		/// <param name="encoder">Encoding encoder</param>
+		/// <returns>string</returns>
 		public static string getOpReturnData(RestApiTransaction tx, Encoding encoder)
 		{
 			string s = null;
-			byte[] bytes = getOpReturnFullData(tx);
-			if (bytes != null)
+			string opReturnHexStr = getOpReturnFullData(tx);
+			if (opReturnHexStr != null)
 			{
-				int prefixLength = 0;
-				if (bytes[0] == 0x00)
-					prefixLength = 2;
-				else
-					prefixLength = 1;
-				if (bytes.Length - 2 > 0)
-				{
-					byte[] strBytes = bytes.Skip(prefixLength).ToArray();
-					s = encoder.GetString(strBytes);
-				}
+				List<byte[]> strBytes = ExtractOpReturnData(opReturnHexStr);
+				s = encoder.GetString(strBytes[0]);
 			}
+			//if (opReturnStr != null)
+			//{
+			//	int prefixLength = 0;
+			//	if (bytes[0] == 0x00)
+			//		prefixLength = 2;
+			//	else
+			//		prefixLength = 1;
+			//	if (bytes.Length - 2 > 0)
+			//	{
+			//		byte[] strBytes = bytes.Skip(prefixLength).ToArray();
+			//		s = encoder.GetString(strBytes);
+			//	}
+			//}
 			Console.WriteLine(s);
 			return (s);
 		}
@@ -228,37 +245,42 @@ namespace BsvSimpleLibrary
 			if (txid != null)
 			{
 				RestApiTransaction tx = getTransaction(uri, network, txid);
-				byte[] bytes = getOpReturnFullData(tx);
+				string opReturnHexStr = getOpReturnFullData(tx);
+				byte[] bytes = new HexEncoder().DecodeData(opReturnHexStr);
 				return (bytes);
 			}
 			return (null);
 		}
 		public static string getOpReturnData(string uri, string network, string txid, Encoding encoder)
 		{
-			string s = null;
-			byte[] bytes = getOpReturnFullData(uri, network, txid);
-			if (bytes != null)
-			{
-				int prefixLength = 0;
-				if (bytes[0] == 0x00)
-					prefixLength = 2;
-				else
-					prefixLength = 1;
-				if (bytes.Length - prefixLength > 0)
-				{
-					byte[] strBytes = bytes.Skip(prefixLength).ToArray();
-					s = encoder.GetString(strBytes);
-				}
-			}
+			RestApiTransaction tx = getTransaction(uri, network, txid);
+			string s=getOpReturnData(tx, encoder);
+
+			//byte[] bytes = getOpReturnFullData(uri, network, txid);
+			//if (bytes != null)
+			//{
+			//	int prefixLength = 0;
+			//	if (bytes[0] == 0x00)
+			//		prefixLength = 2;
+			//	else
+			//		prefixLength = 1;
+			//	if (bytes.Length - prefixLength > 0)
+			//	{
+			//		byte[] strBytes = bytes.Skip(prefixLength).ToArray();
+			//		s = encoder.GetString(strBytes);
+			//	}
+			//}
 			Console.WriteLine(s);
 			return (s);
 		}
 
 		/// <summary>
 		/// 从 OP_RETURN 脚本 hex 中提取所有数据段
-		/// 支持 PUSHDATA1 / PUSHDATA2 / PUSHDATA4
+		/// 支持 PUSHDATA / PUSHDATA1 / PUSHDATA2 / PUSHDATA4
 		/// </summary>
-		static List<byte[]> ExtractOpReturnData(string scriptHex)
+		/// <param name="scriptHex">OP_RETURN 脚本的 hex 字符串</param>
+		/// <returns>List<byte[]> results</returns>
+		public static List<byte[]> ExtractOpReturnData(string scriptHex)
 		{
 			List<byte[]> results = new List<byte[]>();
 

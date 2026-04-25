@@ -66,7 +66,7 @@ namespace BsvSimpleLibrary
 		/// It does not donate everytiem if donationSatoshi is greater than 0 and less than 1000.
 		/// The average donation fee is the set value.</param>
 		/// <returns>If success, return the txid; else return error information</returns>
-		public static Dictionary<string, string> send(string privateKeyStr, long sendSatoshi, string network,
+		public static Dictionary<string, string> send(string wifPrivateKeyStr, long sendSatoshi, string network,
 			out Transaction tx, out long txfee, out long donationFee, string destAddressStr = null, string changeBackAddressStr = null,
 			string opreturnData = null, double feeSatPerByte = 1, long donationSatoshi = 100)
 		{
@@ -77,7 +77,8 @@ namespace BsvSimpleLibrary
 			donationFee = donationSat;
 			///////////////////////////
 			BitcoinSecret privateKey = null;
-			try { privateKey = new BitcoinSecret(privateKeyStr); }
+			Network networkFlag = Network.GetNetwork(network);
+			try { privateKey = new BitcoinSecret(wifPrivateKeyStr, networkFlag); }
 			catch (FormatException e)
 			{
 				Console.WriteLine();
@@ -93,7 +94,7 @@ namespace BsvSimpleLibrary
 				response.Add("Error", err);
 				return (response);
 			}
-			Network networkFlag = privateKey.Network;
+			//Network networkFlag = privateKey.Network;
 			BitcoinAddress destAddress = null;
 			if (destAddressStr != null)
 				destAddress = BitcoinAddress.Create(destAddressStr, networkFlag);
@@ -135,7 +136,7 @@ namespace BsvSimpleLibrary
 				privateKey.GetAddress(ScriptPubKeyType.Legacy).ToString());
 			addout(tx, opreturnData, destAddress, changeBackAddress, sendSatoshi, donationSat, network, networkFlag);
 			long changeBacksats = addin(sendSatoshi, tx, utxos, donationSat, feeSatPerByte, scriptPubKey, out txfee);
-			sign(tx, privateKeyStr, utxos, changeBacksats, scriptPubKey);
+			sign(tx, wifPrivateKeyStr, utxos, changeBacksats, scriptPubKey, networkFlag);
 			string responseStr = RestApi_class.sendTransaction(bsvConfiguration_class.RestApiUri, network, tx.ToHex());
 			response.Add("send info", responseStr);
 			return (response);
@@ -236,14 +237,14 @@ namespace BsvSimpleLibrary
 			TxOut txback = new TxOut(new Money(Money.Zero), changeBackAddress.ScriptPubKey);
 			tx.Outputs.Add(txback);
 		}
-		private static void sign(Transaction tx, string privateKeyStr, RestApiUtxo_class[] utxos, long changeBackSatoshi,
-			Script scriptPubKey)
+		private static void sign(Transaction tx, string wifPrivateKeyStr, RestApiUtxo_class[] utxos, long changeBackSatoshi,
+			Script scriptPubKey, Network networkFlag)
 		{
 			//the change back address must be at last.
 			List<Coin> coinList = new List<Coin>();
 			foreach (RestApiUtxo_class utxo in utxos)
 				coinList.Add(new Coin(uint256.Parse(utxo.TxId), utxo.OutIndex, new Money(utxo.Value), scriptPubKey));
-			BitcoinSecret privateKey = new BitcoinSecret(privateKeyStr);
+			BitcoinSecret privateKey = new BitcoinSecret(wifPrivateKeyStr, networkFlag);
 			Coin[] coins = coinList.ToArray();
 			tx.Outputs.Last().Value = changeBackSatoshi;
 			BitcoinSecret[] privateKeys = { privateKey };

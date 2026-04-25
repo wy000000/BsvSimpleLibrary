@@ -33,13 +33,12 @@ namespace bsv
 			//long txfee = 0;
 			//long donationFee = 0;
 			//response = bsvTransaction_class.send(privateKey, 0, network, out tx, out txfee, out donationFee,
-			//    null, null, opReturnData, 1, 0);
+			//	null, null, opReturnData, 1, 0);
 			//Console.WriteLine("tx fee: " + txfee);
 
-			//get opreturn data
+			////get opreturn data
 			//byte[] bytes = RestApi_class.getOpReturnFullData(uri, network, txid);
-			txid = "911c68b02a952165e3aac262ffe114880bd75f2f2ee6341cb5e800e6055a8d79";
-			string s = RestApi_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
+			//string s = RestApi_class.getOpReturnData(uri, network, txid, bsvConfiguration_class.encoding);
 
 			////get tx
 			//RestApiTransaction tx = RestApi_class.getTransaction(uri, network, txid);
